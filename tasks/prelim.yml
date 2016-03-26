@@ -10,8 +10,7 @@
       - cat2
       - V-38653
       - snmp
-      - audit
-      - patch
+      - always
 
 # Setup variables based on operating system
 - name: "PRELIM | Set gpg_key_url for CentOS"
@@ -22,10 +21,9 @@
   tags:
       - cat1
       - V-38476
-      - audit
-      - patch
+      - always
 
-- name: "PRELIM | Set gpg_key_url for Red Hat 6"
+- name: "PRELIM | Set gpg_key_url for Red Hat"
   set_fact:
       gpg_key_url: https://www.redhat.com/security/fd431d51.txt
   when: "ansible_distribution == 'RedHat'"
@@ -33,8 +31,7 @@
   tags:
       - cat1
       - V-38476
-      - audit
-      - patch
+      - always
 
 # List users in order to look files inside each home directory
 - name: "PRELIM | List users accounts"
@@ -45,6 +42,7 @@
   tags:
       - cat1
       - cat2
+      - always
 
 - name: "PRELIM | Identify Unlocked Accounts"
   shell: >
@@ -56,6 +54,7 @@
       - cat1
       - cat2
       - cat3
+      - always
 
 - name: "PRELIM | Identify Unlocked Sys Accounts"
   shell: >
@@ -67,6 +66,7 @@
       - cat1
       - cat2
       - cat3
+      - always
 
 - name: "PRELIM | List system accounts"
   shell: "grep -Ev '/home|root' /etc/passwd | cut -d : -f 1"
@@ -77,10 +77,11 @@
       - cat1
       - cat2
       - cat3
+      - always
 
 # Get separate lists of SysV and xinetd services
 - name: "PRELIM | List SysV services"
-  shell: "chkconfig --list | sed '/^$/ d ; /xinetd based services:/ d ; /^\t/ d' | awk '{print $1}'"
+  shell: "systemctl list-unit-files --type service | grep sysv | awk '{print $1}'"
   register: sysv_services
   changed_when: false
   always_run: yes
@@ -88,9 +89,21 @@
       - cat1
       - cat2
       - cat3
+      - always
+
+- name: "PRELIM | List vsftpd services"
+  shell: "systemctl list-unit-files --type service | grep vsftpd | awk '{print $1}'"
+  register: vsftpd_services
+  changed_when: false
+  always_run: yes
+  tags:
+      - cat1
+      - cat2
+      - cat3
+      - always
 
 - name: "PRELIM | List xinetd services"
-  shell: "chkconfig --list | sed -n '/^\t/,$p' | sed 's/\t//' | cut -d : -f 1"
+  shell: "systemctl list-unit-files --type service | grep xinetd | awk '{print $1}'"
   register: xinetd_services
   changed_when: false
   always_run: yes
@@ -98,24 +111,27 @@
       - cat1
       - cat2
       - cat3
+      - always
 
 # See if IPv6 is enabled and set a fact
 - name: "PRELIM | Check if IPv6 is enabled"
   shell: ip addr | grep inet6
   changed_when: false
   failed_when: false
-  register: rhel6stig_ipv6test
+  register: cent7stig_ipv6test
   ignore_errors: yes
   always_run: yes
   tags:
       - ipv6
+      - always
 
 - name: "PRELIM | Set ipv6_in_use to 'true'"
   set_fact: ipv6_in_use=true
-  when: rhel6stig_ipv6test.stdout
+  when: cent7stig_ipv6test.stdout
   always_run: yes
   tags:
       - ipv6
+      - always
 
 # Get list of shells
 - name: "PRELIM | Get list of shells on system"
@@ -125,15 +141,17 @@
   always_run: yes
   tags:
       - umask
+      - always
 
 - name: "PRELIM | Check for device files with unlabeled_t context"
   shell: ls -RZ /dev | grep unlabeled_t
-  register: rhel6stig_dev_unlabeled_context
+  register: cent7stig_dev_unlabeled_context
   changed_when: false
   failed_when: false
-  when: rhel6stig_cat3
+  when: cent7stig_cat3
   tags:
       - selinux
+      - always
 
 - name: "PRELIM | Check for samba"
   stat: path=/etc/samba/smb.conf
@@ -142,3 +160,4 @@
       - cat3
       - V-38656
       - smb
+      - always

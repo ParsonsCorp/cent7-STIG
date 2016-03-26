@@ -9,12 +9,12 @@ driftfile /var/lib/ntp/drift
 # Permit all access over the loopback interface.  This could
 # be tightened as well, but to do so would effect some of
 # the administrative functions.
-{% for item in rhel6stig_ntp_config_restrict %}
+{% for item in cent7stig_ntp_config_restrict %}
 restrict {{ item }}
 {% endfor %}
 
 # NTP Servers
-{% for item in rhel6stig_ntp_config_servers %}
+{% for item in cent7stig_ntp_config_servers %}
 server {{ item }}
 {% endfor %}
 

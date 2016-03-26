@@ -5,13 +5,13 @@
       - test
 
 - include: cat1.yml
-  when: rhel6stig_cat1
+  when: cent7stig_cat1
 
 - include: cat2.yml
-  when: rhel6stig_cat2
+  when: cent7stig_cat2
 
 - include: cat3.yml
-  when: rhel6stig_cat3
+  when: cent7stig_cat3
 
 - include: post.yml
   tags:

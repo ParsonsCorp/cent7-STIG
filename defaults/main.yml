@@ -1,67 +1,67 @@
 ---
-# Generate an audit report
-make_audit_report: false
-
 # Enable or disable remediation for each category
-rhel6stig_cat1: true
-rhel6stig_cat2: false
-rhel6stig_cat3: false
+cent7stig_cat1: true
+cent7stig_cat2: true
+cent7stig_cat3: true
 
 # Changing system defaults
-rhel6stig_snmp_community: B0re4lis
-rhel6stig_pass_min_length: 14
-rhel6stig_pass_min_days: 1
-rhel6stig_pass_max_days: 60
-rhel6stig_pam_unix_params: sha512 shadow try_first_pass use_authtok remember=24
-rhel6stig_pam_auth_sufficient: pam_unix.so try_first_pass
-rhel6stig_pam_cracklib_params: try_first_pass retry=3 maxrepeat=3 minlen=14 dcredit=-1 ucredit=-1 ocredit=-1 lcredit=-1 difok=4
-rhel6stig_pam_faillock_params:
+cent7stig_snmp_community: B0re4lis
+cent7stig_pass_min_length: 14
+cent7stig_pass_min_days: 1
+cent7stig_pass_max_days: 60
+cent7stig_pam_unix_params: sha512 shadow try_first_pass use_authtok remember=24
+cent7stig_pam_auth_sufficient: pam_unix.so try_first_pass
+cent7stig_pam_cracklib_params: try_first_pass retry=3 maxrepeat=3 minlen=14 dcredit=-1 ucredit=-1 ocredit=-1 lcredit=-1 difok=4
+cent7stig_pam_faillock_params:
   - 'auth        [default=die] pam_faillock.so authfail deny=3 unlock_time=604800 fail_interval=900'
   - 'auth        required      pam_faillock.so authsucc deny=3 unlock_time=604800 fail_interval=900'
   - 'auth        required      pam_faillock.so preauth silent deny=3 unlock_time=604800 fail_interval=900'
 
 # SELinux settings
-rhel6stig_selinux_pol: targeted
+cent7stig_selinux_pol: targeted
 
 # Network Settings
 # WARNING!
 # Setting this to false will cause the playbook to execute tasks
 # that disable DHCP in /etc/sysconfig/network-scripts/ifcfg-eth*
 # and may leave your system in an unusable state after a reboot.
-rhel6stig_use_dhcp: true
+cent7stig_use_dhcp: true
 
 # Set this to false to have the role pause
-rhel6stig_fullauto: true
+cent7stig_fullauto: true
 
 # Set to true to install all patches and updates available via yum
-rhel6stig_update_packages: true
+cent7stig_update_packages: true
+
+# Set to true to install new packages via yum
+cent7stig_install_packages: true
 
 # Set maximum number of simultaneous system logins (V-38684)
-rhel6stig_maxlogins: 10
+cent7stig_maxlogins: 10
 
 # Email address for root mail
-rhel6stig_root_email_address: foo@baz.com
+cent7stig_root_email_address: foo@baz.com
 
 # Set to 'true' if X Windows is needed in your environment
-rhel6stig_xwindows_required: false
+cent7stig_xwindows_required: false
 
 # Assume ipv6 is disabled on the target system.
 # This will be changed to 'true' via set_fact in main.yml
-rhel6stig_ipv6_in_use: false
+cent7stig_ipv6_in_use: false
 
 # Whether or not TFTP is required
 # This will prevent the removal of tftp and tftp-server packages
 # and configure tftp to run securely
-rhel6stig_tftp_required: false
+cent7stig_tftp_required: false
 
 # Set to true if system is acting as a router
 # This will disable changing net.ipv4 settings as well as
 # allow the kernel to forward packets
-rhel6stig_system_is_router: false
+cent7stig_system_is_router: false
 
 # Set to true if system is an authorized mail relay
 # This will disable the postfix settings V-38622
-rhel6stig_is_mail_relay: false
+cent7stig_is_mail_relay: false
 
 # By default will create a random password with the same grub-crypt --sha-512
 # mechanism rebuilt as an Ansible module.
@@ -71,17 +71,17 @@ rhel6stig_is_mail_relay: false
 # define the password and be able to access the bootloader
 # KEEP AS 'random' ONLY IF YOU DON'T EVER WANT TO ACCESS THE BOOTLOADER
 # i.e. If this system is running in a public cloud 
-rhel6stig_bootloader_password: random
+cent7stig_bootloader_password: random
 
 # NTP configuration used in ntp.conf
 # These should be set to DoD authoritative time source
-rhel6stig_ntp_config_servers:
+cent7stig_ntp_config_servers:
   - 0.centos.pool.ntp.org
   - 1.centos.pool.ntp.org
   - 2.centos.pool.ntp.org
   - 3.centos.pool.ntp.org
 
-rhel6stig_ntp_config_restrict:
+cent7stig_ntp_config_restrict:
   - "-4 default kod nomodify notrap nopeer noquery"
   - "-6 default kod nomodify notrap nopeer noquery"
   - "127.0.0.1"
@@ -90,7 +90,7 @@ rhel6stig_ntp_config_restrict:
 # Services listed in CAT III findings and their configuration
 # state should be started or stopped
 # enabled can be yes or no
-rhel6stig_cat3_services:
+cent7stig_cat3_services:
   - name: abrtd
     state: stopped
     enabled: no
@@ -139,12 +139,12 @@ rhel6stig_cat3_services:
 # List of temporary accounts and their expiration dates
 # Format of expiration date is YYYY-MM-DD
 #
-# rhel6stig_temporary_users:
+# cent7stig_temporary_users:
   # - user: foo
   #   expiration: "2021-09-24"
 
 # Auditd.conf settings
-rhel6stig_auditd_config:
+cent7stig_auditd_config:
   # V-38464 - compliant options SYSLOG|EXEC|SINGLE|HALT
   disk_error_action: SYSLOG
   # V-38468 - compliant options SYSLOG|EXEC|SINGLE|HALT
@@ -178,7 +178,7 @@ rhel6stig_auditd_config:
   auditd_failure_flag: 2
 
 # AIDE settings
-rhel6stig_aide_cron:
+cent7stig_aide_cron:
   aide_job: '/usr/sbin/aide --check'
   aide_minute: 04
   aide_hour: 05

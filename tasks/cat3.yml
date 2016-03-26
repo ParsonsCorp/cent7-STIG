@@ -5,7 +5,7 @@
   command: chkconfig 'autofs' --list
   register: autofs_service_audit
   changed_when: false
-  failed_when: false
+  failed_when:  "'No such file or directory' not in autofs_service_audit.stderr"
   always_run: yes
   tags:
       - cat3
@@ -20,7 +20,6 @@
       name: autofs
       state: stopped
       enabled: no
-  when: "':on' in autofs_service_audit.stdout"
   tags:
       - cat3
       - low
@@ -38,6 +37,7 @@
   failed_when: false
   register: rpm_verify_packages
   always_run: yes
+  when: cent7stig_update_packages
   tags:
       - cat3
       - low
@@ -45,7 +45,7 @@
       - V-38452
       - V-38453
       - V-38454
-      - audit
+      - always
 
 - name: "LOW | V-38447 | AUDIT | The system package management tool must verify contents of all files associated with packages."
   command: rpm -qf {{ item | regex_replace('^..5......\\s+(/.+)$', '\\1') }}
@@ -58,11 +58,11 @@
       - low
       - V-38447
       - rpm
-      - audit
+      - always
 
 - name: "LOW | V-38447 | PATCH | The system package management tool must verify contents of all files associated with packages."
   command: yum reinstall -y {{ item.stdout }}
-  when: item|changed
+  when:  item|changed
   with_items: rpm_integrity_audit.results
   tags:
       - cat3
@@ -83,7 +83,7 @@
       - low
       - V-38452
       - rpm
-      - audit
+      - always
 
 - name: "LOW | V-38452 | PATCH | The system package management tool must verify permissions on all files and directories associated with packages."
   command: rpm --setperms {{ item.stdout }}
@@ -154,7 +154,7 @@
 - name: "LOW | V-38460 | AUDIT | The NFS server must not have the all_squash option enabled."
   command: grep all_squash /etc/exports
   register: nfs_all_squash_disabled_audit
-  failed_when: nfs_all_squash_disabled_audit.rc == 2
+  failed_when: nfs_all_squash_disabled_audit.stdout_lines|length > 0
   changed_when: false
   always_run: yes
   tags:
@@ -185,7 +185,7 @@
 - name: "LOW | V-38471 | AUDIT | The system must forward audit records to the syslog service."
   command: grep '^active' /etc/audisp/plugins.d/syslog.conf
   register: auditd_syslog_output_audit
-  failed_when: auditd_syslog_output_audit.rc == 2
+  failed_when: false
   changed_when: false
   always_run: yes
   tags:
@@ -215,7 +215,7 @@
 # V-38474 lock gui
 - name: "LOW | V-38474 | AUDIT | Low  The system must allow locking of graphical desktop sessions."
   command: gconftool-2 --direct --config-source xml:readwrite:/etc/gconf/gconf.xml.mandatory --get /apps/gnome_settings_daemon/keybindings/screensaver
-  when: rhel6stig_xwindows_required
+  when: cent7stig_xwindows_required
   register: gui_screen_lock_hotkey_audit
   always_run: yes
   tags:
@@ -227,7 +227,7 @@
 
 - name: "LOW | V-38474 | PATCH | Low  The system must allow locking of graphical desktop sessions."
   command: gconftool-2 --direct --config-source xml:readwrite:/etc/gconf/gconf.xml.mandatory --type string --set /apps/gnome_settings_daemon/keybindings/screensaver "<Ctrl><Alt>l"
-  when: rhel6stig_xwindows_required
+  when: cent7stig_xwindows_required
   tags:
       - cat3
       - low
@@ -241,13 +241,14 @@
   register: rhnsd_service_audit
   always_run: yes
   changed_when: false
+  failed_when: "'No such file or directory' not in rhnsd_service_audit.stderr"
   ignore_errors: yes
   tags:
       - cat3
       - low
       - V-38478
       - rhnsd
-      - audit
+      - always
 
 - name: "LOW | V-38478 | PATCH | The Red Hat Network Service (rhnsd) service must not be running, unless using RHN or an RHN Satellite."
   shell: chkconfig rhnsd off && chkconfig rhnsd --list
@@ -603,12 +604,13 @@
   changed_when: false
   failed_when: false
   always_run: yes
+  when: cent7stig_install_packages
   tags:
       - cat3
       - low
       - V-38584
       - xinetd
-      - audit
+      - always
 
 - name: "LOW | V-38584 | PATCH | The xinetd service must be uninstalled if no network services utilizing it are enabled."
   yum:
@@ -624,7 +626,7 @@
 
 # V-38590 install screen
 - name: "LOW | V-38590 | AUDIT | The system must allow locking of the console screen in text mode."
-  command: rpm -q screen
+  command: rpm -q tmux
   register: pkgs_screen_installed_audit
   changed_when: false
   failed_when: false
@@ -634,19 +636,20 @@
       - low
       - V-38590
       - screen_lock
-      - screen
+      - tmux
       - audit
 
 - name: "LOW | V-38590 | PATCH | The system must allow locking of the console screen in text mode."
   yum:
-      name: screen
+      name: tmux
       state: present
+  when: cent7stig_install_packages
   tags:
       - cat3
       - low
       - V-38590
       - screen_lock
-      - screen
+      - tmux
       - patch
 
 # V-38608 sshd conf
@@ -689,7 +692,6 @@
       name: avahi-daemon
       state: stopped
       enabled: no
-  when: "':on' in avahi_service_enabled_audit or avahi_service_running_audit.rc == 0"
   tags:
       - cat3
       - low
@@ -718,13 +720,12 @@
   yum:
       name: openldap-servers
       state: absent
-  when: not rhel6stig_openldap_server_required
   tags:
       - cat3
       - low
       - V-38627
       - openldap_server
-      - audit
+      - patch
 
 # V-38635 auditd
 
@@ -735,7 +736,7 @@
   command: chkconfig 'abrtd' --list
   register: abrtd_service_enabled_audit
   changed_when: false
-  failed_when: false
+  failed_when: "'No such file or directory' not in abrtd_service_enabled_audit.stderr"
   always_run: yes
   tags:
       - cat3
@@ -764,7 +765,6 @@
       name: abrtd
       state: stopped
       enabled: no
-  when: "':on' in abrtd_service_enabled_audit or abrtd_service_running_audit.rc == 0"
   tags:
       - cat3
       - low
@@ -807,7 +807,6 @@
       name: atd
       state: stopped
       enabled: no
-  when: "':on' in atd_service_enabled_audit or atd_service_running_audit.rc == 0"
   tags:
       - cat3
       - low
@@ -852,7 +851,6 @@
       name: ntpdate
       state: stopped
       enabled: no
-  when: "':on' in ntpdate_service_enabled_audit or ntpdate_service_running_audit.rc == 0"
   tags:
       - cat3
       - low
@@ -897,7 +895,6 @@
       name: oddjobd
       state: stopped
       enabled: no
-  when: "':on' in oddjobd_service_enabled_audit or oddjobd_service_running_audit.rc == 0"
   tags:
       - cat3
       - low
@@ -942,7 +939,6 @@
       name: qpidd
       state: stopped
       enabled: no
-  when: "':on' in qpidd_service_enabled_audit or qpidd_service_running_audit.rc == 0"
   tags:
       - cat3
       - low
@@ -987,7 +983,6 @@
       name: rdisc
       state: stopped
       enabled: no
-  when: "':on' in rdisc_service_enabled_audit or rdisc_service_running_audit.rc == 0"
   tags:
       - cat3
       - low
@@ -1044,7 +1039,6 @@
       name: postfix
       state: started
       enabled: yes
-  when: postfix_service_running_audit.rc == 0
   tags:
       - cat3
       - low
@@ -1087,7 +1081,6 @@
       name: netconsole
       state: stopped
       enabled: no
-  when: "':on' in netconsole_service_enabled_audit or netconsole_service_running_audit.rc == 0"
   tags:
       - cat3
       - low
@@ -1116,7 +1109,7 @@
   yum:
       name: "@X Window System"
       state: absent
-  when: not rhel6stig_xwindows_required
+  when: not cent7stig_xwindows_required
   tags:
       - cat3
       - low
@@ -1151,6 +1144,7 @@
   yum:
       name: openswan
       state: present
+  when: cent7stig_install_packages
   tags:
       - cat3
       - low
@@ -1178,6 +1172,7 @@
   changed_when: false
   failed_when: false
   always_run: yes
+  when: vsftpd_services.stdout_lines|length > 0
   tags:
       - cat3
       - low
@@ -1192,7 +1187,7 @@
   changed_when: false
   failed_when: false
   always_run: yes
-  when: vsftpd_service_installed_audit.stdout.find('not installed') == -1
+  when: vsftpd_services.stdout_lines|length > 0
   tags:
       - cat3
       - low
@@ -1206,7 +1201,7 @@
   register: vsftpd_config_file_audit
   changed_when: false
   failed_when: false
-  when: vsftpd_service_installed_audit.stdout.find('not installed') == -1 and vsftpd_xinetd_startup_file_audit.stdout
+  when: vsftpd_services.stdout_lines|length > 0
   always_run: yes
   tags:
       - cat3
@@ -1222,7 +1217,7 @@
   changed_when: false
   failed_when: false
   always_run: yes
-  when: vsftpd_service_installed_audit.stdout.find('not installed') == -1
+  when: vsftpd_services.stdout_lines|length > 0
   tags:
       - cat3
       - low
@@ -1238,7 +1233,7 @@
       dest: "{{ vsftpd_config_file_audit.stdout | default('/etc/vsftpd/vsftpd.conf') }}"
       regexp: '^#?xferlog_enable'
       line: 'xferlog_enable=YES'
-  when: vsftpd_service_installed_audit.stdout.find('not installed') == -1
+  when: vsftpd_services.stdout_lines|length > 0
   tags:
       - cat3
       - low
@@ -1252,7 +1247,7 @@
 - name: "LOW | V-51369 | AUDIT | The system must use a Linux Security Module configured to limit the privileges of system services."
   command: grep '^SELINUXTYPE' /etc/selinux/config
   register: selinux_policy_audit
-  failed_when: selinux_policy_audit.rc == 2
+  failed_when: selinux_policy_audit.stdout_lines|length > 0
   changed_when: false
   always_run: yes
   tags:
@@ -1285,7 +1280,7 @@
       - low
       - V-51379
       - secontext
-      - audit
+      - always
 
 - name: "LOW | V-51379 | PATCH | All device files must be monitored by the system Linux Security Module."
   command: restorecon -r /dev/
@@ -1302,16 +1297,29 @@
 
 # --- BREAK --- #
 
-- name: V-38649 Low  The system default umask for the csh shell must be 077
-  replace: backup=yes dest=/etc/csh.cshrc regexp="umask \d\d\d" replace="umask 077"
+- name: "LOW | V-38649 | PATCH | The system default umask for the csh shell must be 077"
+  replace:
+    backup: yes
+    dest: /etc/csh.cshrc
+    regexp: 'umask \d\d\d'
+    replace: "umask 077"
   tags: [ 'cat3' , 'V-38649' , 'csh' , 'umask' ]
 
-- name: V-38642 Low  The system default umask for daemons must be 027 or 022
-  lineinfile: state=present backup=yes dest=/etc/init.d/functions regexp="umask \d\d\d" line="umask 022"
+- name: "LOW | V-38642 | PATCH | The system default umask for daemons must be 027 or 022"
+  lineinfile:
+    state: present
+    backup: yes
+    dest: /etc/init.d/functions
+    regexp: 'umask \d\d\d'
+    line: "umask 022"
   tags: [ 'cat3' , 'V-38642' , 'umask' ]
 
-- name: V-38647 Low  The system default umask in /etc/profile must be 077
-  replace: backup=yes dest={{ item }} regexp="umask \d\d\d" replace="umask 077"
+- name: "LOW | V-38647 | PATCH | Low  The system default umask in /etc/profile must be 077"
+  replace:
+    backup: yes
+    dest: "{{ item }}"
+    regexp: 'umask \d\d\d'
+    replace: "umask 077"
   with_items:
     - /etc/profile
     - /etc/bashrc
@@ -1321,50 +1329,94 @@
 # This required two tasks in order to add multiple lines cleanly
 # Adding '\n' to the 'line' field causes this module to reinsert the same
 # line every time the task is run which is very undesirable.
-- name: Set default umask for fish shell to 077
-  lineinfile: backup=yes dest=/etc/fish/config.fish line="# Set default umask" insertafter=EOF
+- name: "LOW | V-38647 | PATCH | Set default umask for fish shell to 077"
+  lineinfile:
+    backup: yes
+    dest: /etc/fish/config.fish
+    line: "# Set default umask"
+    insertafter: EOF
   when: '"fish" in shells.stdout_lines'
   tags: [ 'cat3' , 'V-38647' , 'umask' , 'bash' ]
 
-- name: Set default umask for fish shell to 077
-  lineinfile: backup=yes dest=/etc/fish/config.fish line="umask 077" insertafter="# Set default umask"
+- name: "LOW | V-38647 | PATCH | Set default umask for fish shell to 077"
+  lineinfile:
+    backup: yes
+    dest: /etc/fish/config.fish
+    line: "umask 077"
+    insertafter: "# Set default umask"
   when: '"fish" in shells.stdout_lines'
   tags: [ 'cat3' , 'V-38647' , 'umask' , 'bash' ]
 
-- name: V-38645 Low  The system default umask in /etc/login.defs must be 077
-  lineinfile: "state=present backup=yes dest=/etc/login.defs regexp='^UMASK' line='UMASK           077'"
+- name: "LOW | V-38645 | PATCH | The system default umask in /etc/login.defs must be 077"
+  lineinfile:
+    state: present
+    backup: yes
+    dest: /etc/login.defs
+    regexp: '^UMASK'
+    line: 'UMASK           077'
   tags: [ 'cat3' , 'V-38645' , 'umask' ]
 
-- name: V-38608 Low  The SSH daemon must set a timeout interval on idle sessions
-  lineinfile: "state=present backup=yes dest=/etc/ssh/sshd_config regexp='^(#)?ClientAliveInterval' line='ClientAliveInterval 900'"
+- name: "LOW | V-38608 | PATCH | The SSH daemon must set a timeout interval on idle sessions"
+  lineinfile:
+    state: present
+    backup: yes
+    dest: /etc/ssh/sshd_config
+    regexp: '^(#)?ClientAliveInterval'
+    line: 'ClientAliveInterval 900'
   tags: [ 'cat3' , 'V-38608' , 'ssh' ]
   notify: restart ssh
 
-- name: V-38651 Low  The system default umask for the bash shell must be 077
-  replace: backup=yes dest=/etc/bashrc regexp="umask \d\d\d" replace="umask 077"
+- name: "LOW | V-38651 | PATCH | The system default umask for the bash shell must be 077"
+  replace:
+    backup: yes
+    dest: /etc/bashrc
+    regexp: 'umask \d\d\d'
+    replace: "umask 077"
   tags: [ 'cat3' , 'V-38651' , 'umask' ]
 
-- name: V-38656 Low  The system must use SMB client signing for connecting to samba servers using smbclient
-  lineinfile: "state=present backup=yes dest=/etc/samba/smb.conf regexp='client signing' line='client signing = mandatory' insertafter='\\[global\\]'"
+- name: "LOW | V-38656 | PATCH | The system must use SMB client signing for connecting to samba servers using smbclient"
+  lineinfile:
+    state: present
+    backup: yes
+    dest: /etc/samba/smb.conf
+    regexp: 'client signing'
+    line: 'client signing = mandatory'
+    insertafter: '\\[global\\]'
   when: samba_check.stat.exists
   tags: [ 'cat3' , 'V-38656' , 'smb' ]
   notify: restart samba
 
-- name: V-38675 Low  Process core dumps must be disabled unless needed
-  lineinfile: "state=present backup=yes dest=/etc/security/limits.conf regexp='^#?\\*.*(hard|soft).*core' line='*               hard    core            0'"
+- name: "LOW | V-38675 | PATCH | Process core dumps must be disabled unless needed"
+  lineinfile:
+    state: present
+    backup: yes
+    dest: /etc/security/limits.conf
+    regexp: '^#?\\*.*(hard|soft).*core'
+    line: '*               hard    core            0'
   tags: [ 'cat3' , 'V-38675' , 'core_dump' ]
 
-- name: V-38685 Low  Temporary accounts must be provisioned with an expiration date
+- name: "LOW | V-38685 | PATCH | Temporary accounts must be provisioned with an expiration date"
   command: chage -E {{ item.expiration }}  {{ item.user }}
-  when: rhel6stig_temporary_users is defined
-  with_items: rhel6stig_temporary_users
+  when: cent7stig_temporary_users is defined
+  with_items: cent7stig_temporary_users
   tags: [ 'cat3' , 'V-38685' , 'accounts' ]
 
-- name: V-38684 Low  The system must limit users to 10 simultaneous system logins, or a site-defined number, in accordance with operational requirements
-  lineinfile: "state=present backup=yes dest=/etc/security/limits.conf insertbefore='^# End of file' regexp='^#?\\*.*maxlogins' line='*               hard    maxlogins       {{ rhel6stig_maxlogins }}'"
+- name: "LOW | V-38684 | PATCH | The system must limit users to 10 simultaneous system logins, or a site-defined number, in accordance with operational requirements"
+  lineinfile:
+    state: present
+    backup: yes
+    dest: /etc/security/limits.conf
+    insertbefore: '^# End of file'
+    regexp: '^#?\\*.*maxlogins'
+    line: '*               hard    maxlogins       {{ cent7stig_maxlogins }}'
   tags: [ 'cat3' , 'V-38684' , 'logon_settings' ]
 
 - name: Use strong MAC algorithms
-  lineinfile: "state=present backup=yes dest=/etc/ssh/sshd_config regexp='^#?MACS' line='MACS    hmac-sha1,umac-64@openssh.com,hmac-ripemd160,hmac-sha2-256,hmac-sha2-512'"
+  lineinfile:
+    state: present
+    backup: yes
+    dest: /etc/ssh/sshd_config
+    regexp: '^#?MACS'
+    line: 'MACS    hmac-sha1,umac-64@openssh.com,hmac-ripemd160,hmac-sha2-256,hmac-sha2-512'
   tags: [ 'cat3' , 'ssh' , 'config' ]
   notify: restart ssh
