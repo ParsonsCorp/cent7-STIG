@@ -1,8 +1,8 @@
 ---
 galaxy_info:
-  author: "Dan Shepherd"
-  description: "Ansible role to apply RHEL 6 STIG"
-  company: "MindPoint Group"
+  author: "David Morse"
+  description: "Ansible role to apply RHEL 6 STIG to CentOS 7 box"
+  company: "Intelligent Software Solutions"
   license: MIT
   min_ansible_version: 1.8
   version: 1.0
@@ -10,10 +10,10 @@ galaxy_info:
   platforms:
   - name: EL
     versions:
-      - 6
+      - 7
   - name: CentOS
     versions:
-      - 6
+      - 7
 
   categories:
     - system
