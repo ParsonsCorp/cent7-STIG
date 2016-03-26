@@ -2,7 +2,6 @@
 galaxy_info:
   author: "David Morse"
   description: "Ansible role to apply RHEL 6 STIG to CentOS 7 box"
-  company: "Intelligent Software Solutions"
   license: MIT
   min_ansible_version: 1.8
   version: 1.0
@@ -11,12 +10,10 @@ galaxy_info:
   - name: EL
     versions:
       - 7
-  - name: CentOS
-    versions:
-      - 7
 
-  categories:
+  tags:
     - system
     - security
+    - STIG
 
 dependencies: []
