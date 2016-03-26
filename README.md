@@ -15,7 +15,7 @@ The role tries to be helpful and pause to let you know it found something. You c
 
 If you want to install this via the `ansible-galaxy` command you'll need to run it like this: 
 
-`ansible-galaxy install -p roles nousdefions.STIG-cent7,devel`
+`ansible-galaxy install -p roles dsmorse.STIG-cent7,devel`
 
 Based on [Red Hat Enterprise Linux 6 STIG Version 1 Release 6 - 2015-01-23](http://iase.disa.mil/stigs/os/unix-linux/Pages/index.aspx).
 
