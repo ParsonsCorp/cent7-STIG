@@ -191,7 +191,7 @@
       mode: "go-w"
       path: "{{ item }}"
   when: library_perms_audit.stdout
-  with_items: library_perms_audit.stdout_lines
+  with_items: "{{ library_perms_audit.stdout_lines }}"
   tags:
       - cat2
       - medium
@@ -218,7 +218,7 @@
       owner: "root"
       path: "{{ item }}"
   when: library_owner_audit.stdout
-  with_items: library_owner_audit.stdout_lines
+  with_items: "{{ library_owner_audit.stdout_lines }}"
   tags:
       - cat2
       - medium
@@ -272,7 +272,7 @@
       mode: "og-w"
       path: "{{ item }}"
   when: system_files_perms_audit.stdout
-  with_items: system_files_perms_audit.stdout_lines
+  with_items: "{{ system_files_perms_audit.stdout_lines }}"
   tags:
       - cat2
       - medium
@@ -325,7 +325,7 @@
       state: file
       owner: root
   when: sys_commands_owner_audit.stdout
-  with_items: sys_commands_owner_audit.stdout_lines
+  with_items: "{{ sys_commands_owner_audit.stdout_lines }}"
   tags:
       - cat2
       - medium
@@ -459,10 +459,9 @@
       dest: '{{ item }}'
       regexp: '^gpgcheck=0'
       replace: 'gpgcheck=1'
-  ignore_errors: yes
   with_flattened:
     - /etc/yum.conf
-    - repo_crypto_check_audit.stdout_lines
+    - "{{ repo_crypto_check_audit.stdout_lines }}"
   tags:
       - cat2
       - medium
@@ -624,7 +623,7 @@
       state: directory
       mode: "go-w"
       path: "{{ item }}"
-  with_items: audit_log_dir_perms_audit.stdout_lines
+  with_items: "{{ audit_log_dir_perms_audit.stdout_lines }}"
   when: audit_log_dir_perms_audit.stdout
   tags:
       - cat2
@@ -655,7 +654,7 @@
       state: file
       owner: root
       path: "{{ item }}"
-  with_items: audit_log_dir_owner_audit.stdout_lines
+  with_items: "{{ audit_log_dir_owner_audit.stdout_lines }}"
   when: audit_log_dir_owner_audit.stdout
   tags:
       - cat2
@@ -686,7 +685,7 @@
       name: "{{ item }}"
       state: present
       expires: 1412541480
-  with_items: unlocked_sys_accounts_audit.stdout_lines
+  with_items: "{{ unlocked_sys_accounts_audit.stdout_lines }}"
   when: unlocked_sys_accounts_audit.stdout
   tags:
       - cat2
@@ -717,7 +716,7 @@
       path: "{{ item }}"
       mode: "u-x,g-wx,o-rwx"
   ignore_errors: yes
-  with_items: audit_log_file_perms_audit.stdout_lines
+  with_items: "{{ audit_log_file_perms_audit.stdout_lines }}"
   tags:
       - medium
       - cat2
@@ -763,7 +762,7 @@
   assert:
       that: "{{ item | integer }} > 900"
       that: "{{ login_failures_account_require.stdout_lines | length }} == 2"
-  with_items: login_failures_interval.stdout_lines
+  with_items: "{{ login_failures_interval.stdout_lines }}"
   register: login_failures_interval_audit
   ignore_errors: yes
   tags:
@@ -1117,7 +1116,7 @@
 - name: "MEDIUM | V-38518 | AUDIT | All rsyslog-generated log files must be owned by root."
   stat:
       path: "{{ item }}"
-  with_items: rsyslog_logfiles.stdout_lines
+  with_items: "{{ rsyslog_logfiles.stdout_lines }}"
   register: rsyslog_logfiles_audit
   ignore_errors: yes
   tags:
@@ -1134,8 +1133,7 @@
       owner: root
       follow: yes
       state: file
-  ignore_errors: yes
-  with_items: rsyslog_logfiles.stdout_lines
+  with_items: "{{ rsyslog_logfiles.stdout_lines }}"
   tags:
       - cat2
       - medium
@@ -1150,8 +1148,7 @@
       group: root
       state: file
       follow: yes
-  ignore_errors: yes
-  with_items: rsyslog_logfiles.stdout_lines
+  with_items: "{{ rsyslog_logfiles.stdout_lines }}"
   tags:
       - cat2
       - medium
@@ -2555,7 +2552,7 @@
     regexp: '^BOOTPROTO='
     line: 'BOOTPROTO=\"none\"'
     backup: no
-  with_items: interface_config_files.stdout_lines
+  with_items: "{{ interface_config_files.stdout_lines }}"
   register: dhcp_change
   when: interface_config_files.stdout and not cent7stig_use_dhcp
   tags: [ 'cat2' , 'V-38679' , 'network' , 'dhcp' ]
@@ -2616,7 +2613,7 @@
 
 - name: "MEDIUM | V-38519 | PATCH | Check file state and type to avoid hard link failures"
   stat: path={{ item }}
-  with_items: rsyslog_log_files.stdout_lines
+  with_items: "{{ rsyslog_log_files.stdout_lines }}"
   register: log_files_st
   tags: [ 'cat2' , 'V-38519' , 'V-38518' , 'V-38623' , 'file_perms' ]
 
@@ -2632,7 +2629,7 @@
   file:
     state: absent
     dest: ~{{ item }}/.netrc
-  with_items: users.stdout_lines
+  with_items: "{{ users.stdout_lines }}"
   tags: [ 'cat2' , 'V-38619' , 'netrc' ]
 
 - name: "MEDIUM | V-38620 | PATCH | Installing NTP for V-38620 Medium/V-38621 Medium"
