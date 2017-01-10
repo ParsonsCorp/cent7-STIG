@@ -237,6 +237,7 @@
     name: rsh
     state: stopped
     enabled: no
+  ignore_errors: yes
   tags:
       - cat1
       - high
@@ -263,6 +264,7 @@
   service:
       name: rexec
       state: stopped
+  ignore_errors: yes
   tags:
       - cat1
       - high
@@ -288,6 +290,7 @@
   service:
     name: rlogin
     enabled: no
+  ignore_errors: yes
   tags:
       - cat1
       - high

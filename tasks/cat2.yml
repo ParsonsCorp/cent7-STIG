@@ -459,6 +459,7 @@
       dest: '{{ item }}'
       regexp: '^gpgcheck=0'
       replace: 'gpgcheck=1'
+  ignore_errors: yes
   with_flattened:
     - /etc/yum.conf
     - repo_crypto_check_audit.stdout_lines
@@ -715,6 +716,7 @@
       state: file
       path: "{{ item }}"
       mode: "u-x,g-wx,o-rwx"
+  ignore_errors: yes
   with_items: audit_log_file_perms_audit.stdout_lines
   tags:
       - medium
@@ -773,14 +775,16 @@
       - pam
 
 - name: "MEDIUM | V-38501 | PATCH | The system must disable accounts after excessive login failures within a 15-minute interval."
-  pam:
-      service: "{{ item }}"
+  pamd:
+      name: "{{ item }}"
+      new_control: required
+      new_module_path: pam_faillock.so
+      new_type: auth
       type: auth
-      control: required
-      pam_module: pam_faillock.so
-      before_line: auth sufficient pam_unix.so
-      arguments: preauth silent deny=3 unlock_time=604800 fail_interval=900
-      state: present
+      module_path: pam_unix.so
+      control: sufficient
+      module_arguments: preauth silent deny=3 unlock_time=604800 fail_interval=900
+      state: before
   with_items:
       - password-auth
       - system-auth
@@ -793,14 +797,16 @@
       - pam
 
 - name: "MEDIUM | V-38501 | PATCH | The system must disable accounts after excessive login failures within a 15-minute interval."
-  pam:
-      service: "{{ item }}"
+  pamd:
+      name: "{{ item }}"
+      new_type: auth
+      new_control: '[default=die]'
+      new_module_path: pam_faillock.so
       type: auth
-      control: '[default=die]'
-      pam_module: pam_faillock.so
-      after_line: auth sufficient pam_unix.so
-      arguments: authfail deny=3 unlock_time=604800 fail_interval=900
-      state: present
+      control: sufficient
+      module_path: pam_unix.so
+      module_arguments: authfail deny=3 unlock_time=604800 fail_interval=900
+      state: after
   with_items:
       - password-auth
       - system-auth
@@ -946,6 +952,7 @@
       name: firewalld
       enabled: no
       state: stopped
+  ignore_errors: yes
   tags:
       - V-38512
       - ipv4
@@ -1127,6 +1134,7 @@
       owner: root
       follow: yes
       state: file
+  ignore_errors: yes
   with_items: rsyslog_logfiles.stdout_lines
   tags:
       - cat2
@@ -1142,6 +1150,7 @@
       group: root
       state: file
       follow: yes
+  ignore_errors: yes
   with_items: rsyslog_logfiles.stdout_lines
   tags:
       - cat2
@@ -1554,14 +1563,16 @@
       - pam
 
 - name: "MEDIUM | V-38573 | PATCH | The system must disable accounts after three consecutive unsuccessful logon attempts."
-  pam:
-      service: "{{ item }}"
+  pamd:
+      name: "{{ item }}"
+      new_type: auth
+      new_control: required
+      new_module_path: pam_faillock.so
       type: auth
-      control: required
-      pam_module: pam_faillock.so
-      arguments: preauth silent deny=3 unlock_time=604800 fail_interval=900
-      before_line: auth sufficient pam_unix.so
-      state: present 
+      control: sufficient
+      module_path: pam_unix.so
+      module_arguments: preauth silent deny=3 unlock_time=604800 fail_interval=900
+      state: before
   with_items:
       - system-auth
       - password-auth
@@ -1575,14 +1586,16 @@
       - pam
 
 - name: "MEDIUM | V-38573 | PATCH | The system must disable accounts after three consecutive unsuccessful logon attempts."
-  pam:
-      service: "{{ item }}"
+  pamd:
+      name: "{{ item }}"
+      new_type: auth
+      new_control: '[default=die]' 
+      new_module_path: pam_faillock.so
       type: auth
-      control: '[default=die]' 
-      pam_module: pam_faillock.so
-      arguments: authfail deny=3 unlock_time=604800 fail_interval=900 
-      after_line: auth sufficient pam_unix.so
-      state: present 
+      control: sufficient
+      module_path: pam_unix.so
+      module_arguments: authfail deny=3 unlock_time=604800 fail_interval=900 
+      state: after 
   with_items:
       - system-auth
       - password-auth
@@ -1596,13 +1609,15 @@
       - pam
 
 - name: "MEDIUM | V-38573 | PATCH | The system must disable accounts after three consecutive unsuccessful logon attempts."
-  pam:
-      service: "{{ item }}"
+  pamd:
+      name: "{{ item }}"
+      new_type: account
+      new_control: required 
+      new_module_path: pam_faillock.so
       type: account
-      control: required 
-      pam_module: pam_faillock.so
-      before_line: account required pam_unix.so     
-      state: present 
+      control: required
+      module_path: pam_unix.so
+      state: before
   with_items:
       - system-auth
       - password-auth
@@ -1645,6 +1660,10 @@
       - passwords
       - always
 
+- name: test
+  debug:
+    msg: "{{pamd_files}}"
+
 - name: "MEDIUM | V-38574 | PATCH | The system must use a FIPS 140-2 approved cryptographic hashing algorithm for generating account password hashes (system-auth)."
   # The PAM module doesn't make sense for this particular rule. Lineinfile works perfectly here.
   lineinfile:
@@ -1653,7 +1672,7 @@
       regexp: (^password\s*.*pam_unix.so.*)(md5|sha256|blowfish|bigcrypt)(.*) 
       line: \1sha512\3
       backup: yes
-  with_items: pamd_files.stdout_lines
+  with_items: "{{ pamd_files.stdout_lines }}"
   tags:
       - medium
       - cat2
@@ -1956,14 +1975,16 @@
       - pam
 
 - name: "MEDIUM | V-38592 | PATCH | The system must require administrator action to unlock an account locked by excessive failed login attempts." 
-  pam:
-      service: "{{ item }}"
+  pamd:
+      name: "{{ item }}"
+      new_type: auth
+      new_control: required
+      new_module_path: pam_faillock.so
       type: auth
-      control: required
-      pam_module: pam_faillock.so
-      arguments: preauth silent deny=3 unlock_time=604800 fail_interval=900
-      before_line: auth sufficient pam_unix.so
-      state: present 
+      module_path: pam_unix.so
+      control: sufficient
+      module_arguments: preauth silent deny=3 unlock_time=604800 fail_interval=900
+      state: before
   with_items:
       - system-auth
       - password-auth
@@ -1977,14 +1998,16 @@
       - pam
 
 - name: "MEDIUM | V-38592 | PATCH | The system must require administrator action to unlock an account locked by excessive failed login attempts." 
-  pam:
-      service: "{{ item }}"
+  pamd:
+      name: "{{ item }}"
+      new_type: auth
+      new_control: '[default=die]' 
+      new_module_path: pam_faillock.so
+      module_arguments: authfail deny=3 unlock_time=604800 fail_interval=900 
       type: auth
-      control: '[default=die]' 
-      pam_module: pam_faillock.so
-      arguments: authfail deny=3 unlock_time=604800 fail_interval=900 
-      after_line: auth sufficient pam_unix.so
-      state: present 
+      control: sufficient
+      module_path: pam_unix.so
+      state: after 
   with_items:
       - system-auth
       - password-auth
@@ -1998,13 +2021,15 @@
       - pam
 
 - name: "MEDIUM | V-38592 | PATCH | The system must require administrator action to unlock an account locked by excessive failed login attempts." 
-  pam:
-      service: "{{ item }}"
+  pamd:
+      name: "{{ item }}"
+      new_type: account
+      new_control: required 
+      new_module_path: pam_faillock.so
       type: account
-      control: required 
-      pam_module: pam_faillock.so
-      before_line: account required pam_unix.so     
-      state: present 
+      control: required
+      module_path: pam_unix.so
+      state: before
   with_items:
       - system-auth
       - password-auth
@@ -2245,6 +2270,7 @@
       name: ypbind
       state: stopped
       enabled: no
+  ignore_errors: yes
   tags:
       - medium
       - V-38604
@@ -2326,6 +2352,7 @@
       name: tftp
       state: stopped
       enabled: no
+  ignore_errors: yes
   tags:
       - medium
       - cat2
@@ -2692,9 +2719,9 @@
     regexp={{ item.rx }}
     line={{ item.ln }}
   with_items:
-    - { st: 'present', rx: "'^#?Ciphers'", ln: "'Ciphers aes128-ctr,aes192-ctr,aes256-ctr,aes128-cbc,3des-cbc,aes192-cbc,aes256-cbc'" }
-    - { st: 'present', rx: "'^#?HostbasedAuthentication'", ln: "'HostbasedAuthentication no'" }
-    - { st: 'present', rx: "'^#?PermitRootLogin'", ln: "'PermitRootLogin no'" }
+    - { st: 'present', rx: "'^#?Ciphers'", ln: "Ciphers aes128-ctr,aes192-ctr,aes256-ctr,aes128-cbc,3des-cbc,aes192-cbc,aes256-cbc" }
+    - { st: 'present', rx: "'^#?HostbasedAuthentication'", ln: "HostbasedAuthentication no" }
+    - { st: 'present', rx: "'^#?PermitRootLogin'", ln: "PermitRootLogin no" }
   tags: [ 'cat2' , 'V-38617' , 'V-38611' , 'V-38612' , 'V-38613', 'ssh' ]
   notify: restart ssh
 
@@ -2705,8 +2732,8 @@
     regexp={{ item.rx }}
     line={{ item.ln }}
   with_items:
-    - { st: 'present', rx: "'^#?Banner'", ln: "'Banner /etc/issue'" }
-    - { st: 'present', rx: "'^(#)?PrintLastLog'", ln: "'PrintLastLog yes'" }
+    - { st: 'present', rx: "'^#?Banner'", ln: "Banner /etc/issue" }
+    - { st: 'present', rx: "'^(#)?PrintLastLog'", ln: "PrintLastLog yes" }
   tags: [ 'cat2' , 'V-38615' , 'V-38484' , 'ssh' , 'logon_settings' , 'dod_logon_banner' ]
   notify: restart ssh
 
