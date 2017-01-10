@@ -1660,10 +1660,6 @@
       - passwords
       - always
 
-- name: test
-  debug:
-    msg: "{{pamd_files}}"
-
 - name: "MEDIUM | V-38574 | PATCH | The system must use a FIPS 140-2 approved cryptographic hashing algorithm for generating account password hashes (system-auth)."
   # The PAM module doesn't make sense for this particular rule. Lineinfile works perfectly here.
   lineinfile:
