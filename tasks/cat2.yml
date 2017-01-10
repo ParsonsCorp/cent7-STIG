@@ -2613,7 +2613,7 @@
 
 - name: "MEDIUM | V-38519 | PATCH | Check file state and type to avoid hard link failures"
   stat: path={{ item }}
-  with_items: "{{ rsyslog_log_files.stdout_lines }}"
+  with_items: "{{ rsyslog_logfiles.stdout_lines }}"
   register: log_files_st
   tags: [ 'cat2' , 'V-38519' , 'V-38518' , 'V-38623' , 'file_perms' ]
 
