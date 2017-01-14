@@ -86,7 +86,7 @@
       path: ~{{ item }}/.rhosts
   register: rhosts_audit
   always_run: yes
-  with_items: users.stdout_lines
+  with_items: "{{ users.stdout_lines }}"
   ignore_errors: True
   failed_when: "rhosts_audit.stat.exists is defined and rhosts_audit.stat.exists == True"
   tags:
@@ -100,7 +100,7 @@
   file:
     state: absent
     dest: ~{{ item }}/.rhosts
-  with_items: users.stdout_lines
+  with_items: "{{ users.stdout_lines }}"
   tags:
       - cat1
       - high
@@ -237,6 +237,7 @@
     name: rsh
     state: stopped
     enabled: no
+  ignore_errors: yes
   tags:
       - cat1
       - high
@@ -263,6 +264,7 @@
   service:
       name: rexec
       state: stopped
+  ignore_errors: yes
   tags:
       - cat1
       - high
@@ -288,6 +290,7 @@
   service:
     name: rlogin
     enabled: no
+  ignore_errors: yes
   tags:
       - cat1
       - high
