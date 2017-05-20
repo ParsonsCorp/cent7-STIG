@@ -2,116 +2,118 @@
 # Preliminary tasks that should always be run
 - name: "PRELIM | Check for /etc/snmp/snmpd.conf"
   stat:
-      path: /etc/snmp/snmpd.conf
+    path: /etc/snmp/snmpd.conf
   register: snmpconf_test
-  always_run: yes
+  check_mode: no
   tags:
-      - cat1
-      - cat2
-      - V-38653
-      - snmp
-      - always
+    - cat1
+    - cat2
+    - V-38653
+    - snmp
+    - always
 
 # Setup variables based on operating system
 - name: "PRELIM | Set gpg_key_url for CentOS"
   set_fact:
-      gpg_key_url: http://mirror.centos.org/centos/RPM-GPG-KEY-{{ ansible_distribution }}-{{ ansible_distribution_major_version }}
+    gpg_key_url: http://mirror.centos.org/centos/RPM-GPG-KEY-{{ ansible_distribution }}-{{ ansible_distribution_major_version }}
   when: "ansible_distribution == 'CentOS'"
-  always_run: yes
+  check_mode: no
   tags:
-      - cat1
-      - V-38476
-      - always
+    - cat1
+    - V-38476
+    - gpgcheck
+    - always
 
 - name: "PRELIM | Set gpg_key_url for Red Hat"
   set_fact:
-      gpg_key_url: https://www.redhat.com/security/fd431d51.txt
+    gpg_key_url: https://www.redhat.com/security/fd431d51.txt
   when: "ansible_distribution == 'RedHat'"
-  always_run: yes
+  check_mode: no
   tags:
-      - cat1
-      - V-38476
-      - always
+    - cat1
+    - V-38476
+    - gpgcheck
+    - always
 
 # List users in order to look files inside each home directory
 - name: "PRELIM | List users accounts"
   command: "awk -F: '{print $1}' /etc/passwd"
   register: users
   changed_when: false
-  always_run: yes
+  check_mode: no
   tags:
-      - cat1
-      - cat2
-      - always
+    - cat1
+    - cat2
+    - always
 
 - name: "PRELIM | Identify Unlocked Accounts"
   shell: >
-      awk -F: '$1 !~ /^root$/ && $2 !~ /^[!*]/ {print $1}' /etc/shadow
+    awk -F: '$1 !~ /^root$/ && $2 !~ /^[!*]/ {print $1}' /etc/shadow
   register: unlocked_accounts
   changed_when: false
-  always_run: yes
+  check_mode: no
   tags:
-      - cat1
-      - cat2
-      - cat3
-      - always
+    - cat1
+    - cat2
+    - cat3
+    - always
 
 - name: "PRELIM | Identify Unlocked Sys Accounts"
   shell: >
-      awk -F: '$1 !~ /^root$/ && $2 !~ /^[!*]/ {print $1}' /etc/shadow | xargs -I{} grep {} /etc/passwd | awk -F: '$3 < 500 {print $1}'
+    awk -F: '$1 !~ /^root$/ && $2 !~ /^[!*]/ {print $1}' /etc/shadow | xargs -I{} grep {} /etc/passwd | awk -F: '$3 < 500 {print $1}'
   register: unlocked_sys_accounts
   changed_when: false
-  always_run: yes
+  check_mode: no
   tags:
-      - cat1
-      - cat2
-      - cat3
-      - always
+    - cat1
+    - cat2
+    - cat3
+    - always
 
 - name: "PRELIM | List system accounts"
   shell: "grep -Ev '/home|root' /etc/passwd | cut -d : -f 1"
   register: system_users
   changed_when: false
-  always_run: yes
+  check_mode: no
   tags:
-      - cat1
-      - cat2
-      - cat3
-      - always
+    - cat1
+    - cat2
+    - cat3
+    - always
 
 # Get separate lists of SysV and xinetd services
 - name: "PRELIM | List SysV services"
   shell: "systemctl list-unit-files --type service | grep sysv | awk '{print $1}'"
   register: sysv_services
   changed_when: false
-  always_run: yes
+  check_mode: no
   tags:
-      - cat1
-      - cat2
-      - cat3
-      - always
+    - cat1
+    - cat2
+    - cat3
+    - always
 
 - name: "PRELIM | List vsftpd services"
   shell: "systemctl list-unit-files --type service | grep vsftpd | awk '{print $1}'"
   register: vsftpd_services
   changed_when: false
-  always_run: yes
+  check_mode: no
   tags:
-      - cat1
-      - cat2
-      - cat3
-      - always
+    - cat1
+    - cat2
+    - cat3
+    - always
 
 - name: "PRELIM | List xinetd services"
   shell: "systemctl list-unit-files --type service | grep xinetd | awk '{print $1}'"
   register: xinetd_services
   changed_when: false
-  always_run: yes
+  check_mode: no
   tags:
-      - cat1
-      - cat2
-      - cat3
-      - always
+    - cat1
+    - cat2
+    - cat3
+    - always
 
 # See if IPv6 is enabled and set a fact
 - name: "PRELIM | Check if IPv6 is enabled"
@@ -120,44 +122,45 @@
   failed_when: false
   register: cent7stig_ipv6test
   ignore_errors: yes
-  always_run: yes
+  check_mode: no
   tags:
-      - ipv6
-      - always
+    - ipv6
+    - always
 
 - name: "PRELIM | Set ipv6_in_use to 'true'"
-  set_fact: ipv6_in_use=true
   when: cent7stig_ipv6test.stdout
-  always_run: yes
+  set_fact: ipv6_in_use=true
+  check_mode: no
   tags:
-      - ipv6
-      - always
+    - ipv6
+    - always
 
 # Get list of shells
 - name: "PRELIM | Get list of shells on system"
   shell: grep -Pv "/(sh|nologin|dash)" /etc/shells | sed -r 's#/((bin|sbin|usr)/)+##'
   register: shells
   changed_when: false
-  always_run: yes
+  check_mode: no
   tags:
-      - umask
-      - always
+    - umask
+    - always
 
 - name: "PRELIM | Check for device files with unlabeled_t context"
   shell: ls -RZ /dev | grep unlabeled_t
   register: cent7stig_dev_unlabeled_context
   changed_when: false
   failed_when: false
+  check_mode: no
   when: cent7stig_cat3
   tags:
-      - selinux
-      - always
+    - selinux
+    - always
 
 - name: "PRELIM | Check for samba"
   stat: path=/etc/samba/smb.conf
   register: samba_check
   tags:
-      - cat3
-      - V-38656
-      - smb
-      - always
+    - cat3
+    - V-38656
+    - smb
+    - always
