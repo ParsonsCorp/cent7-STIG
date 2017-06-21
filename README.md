@@ -1,6 +1,19 @@
 Centos 7 DISA STIG
 ================
 
+# We've Moved
+ This project was a port of the RHEL6 STIG implimentaion designed and tested to work with CentOS 7.  It was created and maintained before the RHEL7 STIG was released... It represented the best ideas on how to harden CentOS *at the time*.  In the months since the last commit DISA *has* released the RHEL7 STIG and several teams have created ansible implementations that support both RHEL and CentOS.
+
+ Please See: [https://github.com/PolarisAlpha/RHEL7-STIG](https://github.com/PolarisAlpha/RHEL7-STIG)
+
+
+----
+
+
+## Legacy Info
+
+----
+
 Configure Centos 7 machine to be DISA STIG compliant. CAT I CAT II and CAT III findings will be corrected by default. Findings can be enabled/disabled by setting the appropriate variable to enable those playbooks.
 
 ### WARNING
@@ -13,7 +26,7 @@ The role tries to be helpful and pause to let you know it found something. You c
 
 ## IMPORTANT INSTALL STEP
 
-If you want to install this via the `ansible-galaxy` command you'll need to run it like this: 
+If you want to install this via the `ansible-galaxy` command you'll need to run it like this:
 
 `ansible-galaxy install -p roles dsmorse.STIG-cent7,devel`
 
@@ -43,7 +56,7 @@ There are many role variables defined in defaults/main.yml. This list shows the 
 **cent7stig_ipv6_in_use**       Whether or not ipv6 is in use of the target system. This is set automatically to 'true' if ipv6 is found to be in use. (Default: false)
 **cent7stig_root_email_address**:          Address where system email is sent (Default: foo@baz.com)
 **cent7stig_system_is_router** Whether on not the target system is acting as a router. Disables settings that would break the system if it is a acting as a router. (Default: false)
-**cent7stig_tftp_required**  Whether or not TFTP is required. This will prevent the removal of `tftp` and `tftp-server` packages. It will also  reconfigure the `tftp-server` to run securely. (Default: false) 
+**cent7stig_tftp_required**  Whether or not TFTP is required. This will prevent the removal of `tftp` and `tftp-server` packages. It will also  reconfigure the `tftp-server` to run securely. (Default: false)
 **cent7stig_update_packages**:       Allow the script to install patches and updates to all packages available via yum (Default: false)
 **cent7stig_use_dhcp**:       Whether the system should use DHCP or Static IPs. **Setting this false is dangerous.** (Default: true)
 **cent7stig_xwindows_required**:           Whether or not X Windows is is use on taregt systems. Disables some changes if X Windows is not in use. (Default: false)
@@ -78,10 +91,10 @@ Many tags are available for precise control of what is and is not changed. When 
 Some examples of using tags:
 
     # Don't run any unneeded audit tests (do it fast)
-    ansible-playbook site.yml --skip-tags audit  
+    ansible-playbook site.yml --skip-tags audit
 
     # Only remediate ssh
-    ansible-playbook site.yml --tags= prelim_tasks,ssh 
+    ansible-playbook site.yml --tags= prelim_tasks,ssh
 
     # Don't change SNMP or postfix
     ansible-playbook site.yml --skip-tags= audit,postfix,mail,snmp
