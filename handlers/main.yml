@@ -15,7 +15,9 @@
   service: name=xinetd state=reloaded
 
 - name: restart auditd
-  service: name=auditd state=restarted
+  service:
+    name: auditd
+    state: started
 
 - name: unload usb-storage
   modprobe: name=usb-storage state=absent

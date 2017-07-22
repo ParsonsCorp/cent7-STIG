@@ -71,7 +71,6 @@ Dependencies
 
 Ansible > 1.8
 
-
 Example Playbook
 -------------------------
 
@@ -104,3 +103,4 @@ License
 -------
 
 MIT
+

@@ -4,7 +4,7 @@
 # Not automated V-38439 The system must provide automated support for account management functions.
 - name: "MEDIUM | V-38443, V-38448, V-38449 | AUDIT | The /etc/gshadow file must be owned by root. The /etc/gshadow file must be group-owned by root. The /etc/gshadow file must have mode 0000"
   stat:
-      path: /etc/gshadow
+    path: /etc/gshadow
   register: gshadow_stat
   ignore_errors: yes
   tags:
@@ -18,8 +18,8 @@
 
 - name: "MEDIUM | V-38443 | PATCH | The /etc/gshadow file must be owned by root."
   file:
-      path: /etc/gshadow
-      owner: root
+    path: /etc/gshadow
+    owner: root
   register: gshadow_stat
   tags:
     - cat2
@@ -30,8 +30,8 @@
 
 - name: "MEDIUM | V-38448 | PATCH | The /etc/gshadow file must be group-owned by root."
   file:
-      path: /etc/gshadow
-      group: root
+    path: /etc/gshadow
+    group: root
   register: gshadow_stat
   tags:
     - cat2
@@ -42,8 +42,8 @@
 
 - name: "MEDIUM | V-38449 | PATCH | The /etc/gshadow file must have mode 0000"
   file:
-      path: /etc/gshadow
-      mode: "0000"
+    path: /etc/gshadow
+    mode: "0000"
   register: gshadow_stat
   tags:
     - cat2
@@ -54,7 +54,7 @@
 
 - name: "MEDIUM | V-38450, V-38451, V-38457 | AUDIT | The /etc/passwd file must be owned by root. The /etc/passwd file must be group-owned by root.The /etc/passwd file must have mode 0644 or less permissive"
   stat:
-      path: /etc/passwd
+    path: /etc/passwd
   register: /etc/passwd_stat
   ignore_errors: yes
   tags:
@@ -68,8 +68,8 @@
 
 - name: "MEDIUM | V-38450 | PATCH | The /etc/passwd file be owned by root"
   file:
-      path: /etc/passwd
-      owner: root
+    path: /etc/passwd
+    owner: root
   tags:
     - cat2
     - patch
@@ -79,8 +79,8 @@
 
 - name: "MEDIUM | V-38451 | PATCH | The /etc/passwd file be group-owned by root"
   file:
-      path: /etc/passwd
-      group: root
+    path: /etc/passwd
+    group: root
   tags:
     - cat2
     - patch
@@ -90,8 +90,8 @@
 
 - name: "MEDIUM | V-38457 | PATCH | The /etc/passwd file must have mode 0644 or less permissive"
   file:
-      path: /etc/passwd
-      mode: "u-x,g-wx,o-wx"
+    path: /etc/passwd
+    mode: "u-x,g-wx,o-wx"
   tags:
     - cat2
     - patch
@@ -101,7 +101,7 @@
 
 - name: "MEDIUM | V-38458, V-38459, V-38461 | AUDIT | The /etc/group file must be owned by root. The /etc/group file must be group-owned by root.The /etc/group file must have mode 0644 or less permissive"
   stat:
-      path: /etc/group
+    path: /etc/group
   register: /etc/group_stat
   ignore_errors: yes
   tags:
@@ -115,8 +115,8 @@
 
 - name: "MEDIUM | V-38458 | PATCH | The /etc/group file be owned by root"
   file:
-      path: /etc/group
-      owner: root
+    path: /etc/group
+    owner: root
   tags:
     - cat2
     - patch
@@ -126,8 +126,8 @@
 
 - name: "MEDIUM | V-38459 | PATCH | The /etc/group file be group-owned by root"
   file:
-      path: /etc/group
-      group: root
+    path: /etc/group
+    group: root
   tags:
     - cat2
     - patch
@@ -137,376 +137,375 @@
 
 - name: "MEDIUM | V-38461 | PATCH | The /etc/group file must have mode 0644 or less permissive"
   file:
-      path: /etc/group
-      mode: "u-x,g-wx,o-wx"
+    path: /etc/group
+    mode: "u-x,g-wx,o-wx"
   tags:
-      - cat2
-      - patch
-      - medium
-      - V-38461
-      - file_perms
+    - cat2
+    - patch
+    - medium
+    - V-38461
+    - file_perms
 
 - name: "MEDIUM | V-38464 | AUDIT | The audit system must take appropriate action when there are disk errors on the audit storage volume."
   shell: grep disk_error_action /etc/audit/auditd.conf | cut -d = -f 2 | xargs basename
   register:  disk_err_action_audit
   changed_when: no
-  always_run: yes
+  check_mode: no
   ignore_errors: yes
   tags:
-      - cat2
-      - medium
-      - V-38464
-      - auditd
-      - audit
+    - cat2
+    - medium
+    - V-38464
+    - auditd
+    - audit
 
 - name: "MEDIUM | V-38464 | PATCH | The audit system must take appropriate action when there are disk errors on the audit storage volume."
   lineinfile:
-      regexp: "(^disk_error_action\\s*=)(\\s*)"
-      line: "\\1 {{ cent7stig_auditd_config['disk_full_action'] }}"
-      dest: /etc/audit/auditd.conf
-      backrefs: yes
+    regexp: "(^disk_error_action\\s*=)(\\s*)"
+    line: "\\1 {{ cent7stig_auditd_config['disk_full_action'] }}"
+    dest: /etc/audit/auditd.conf
+    backrefs: yes
   tags:
-      - cat2
-      - medium
-      - V-38464
-      - auditd
-      - patch
+    - cat2
+    - medium
+    - V-38464
+    - auditd
+    - patch
 
 - name: "MEDIUM | V-38465 | AUDIT | Library files must have mode 0755 or less permissive"
   become_user: root
   script: sys_libs_with_bad_perms.sh
   register: library_perms_audit
+  check_mode: no
   changed_when: no
   ignore_errors: yes
   tags:
-      - cat2
-      - medium
-      - V-38465
-      - file_perms
-      - always
+    - cat2
+    - medium
+    - V-38465
+    - file_perms
 
 - name: "MEDIUM | V-38465 | PATCH | Library files must have mode 0755 or less permissive"
   file:
-      state: file
-      mode: "go-w"
-      path: "{{ item }}"
+    state: file
+    mode: "go-w"
+    path: "{{ item }}"
   when: library_perms_audit.stdout
-  with_items: "{{ library_perms_audit.stdout_lines }}"
+  with_items: library_perms_audit.stdout_lines
   tags:
-      - cat2
-      - medium
-      - V-38465
-      - file_perms
-      - patch
+    - cat2
+    - medium
+    - V-38465
+    - file_perms
+    - patch
 
 - name: "MEDIUM | V-38466 | AUDIT | Library files must be owned by root"
   become_user: root
   script: sys_libs_with_bad_owner.sh
   register: library_owner_audit
+  check_mode: no
   changed_when: no
   ignore_errors: yes
   tags:
-      - cat2
-      - medium
-      - V-38466
-      - file_perms
-      - always
+    - cat2
+    - medium
+    - V-38466
+    - file_perms
 
 - name: "MEDIUM | V-38466 | PATCH | Library files must be owned by root"
   file:
-      state: file
-      owner: "root"
-      path: "{{ item }}"
+    state: file
+    owner: "root"
+    path: "{{ item }}"
   when: library_owner_audit.stdout
-  with_items: "{{ library_owner_audit.stdout_lines }}"
+  with_items: library_owner_audit.stdout_lines
   tags:
-      - cat2
-      - medium
-      - V-38466
-      - file_perms
-      - patch
+    - cat2
+    - medium
+    - V-38466
+    - file_perms
+    - patch
 
 - name: "MEDIUM | V-384648 | AUDIT | The audit system must take appropriate action when the audit storage volume is full."
   shell: grep disk_full_action /etc/audit/auditd.conf | cut -d = -f 2 | xargs basename
   register:  disk_full_action_audit
   changed_when: no
-  always_run: yes
+  check_mode: no
   ignore_errors: yes
   tags:
-      - cat2
-      - medium
-      - V-38468
-      - auditd
-      - audit
+    - cat2
+    - medium
+    - V-38468
+    - auditd
+    - audit
 
 - name: "MEDIUM | V-38468 | PATCH | The audit system must take appropriate action when the audit storage volume is full."
   lineinfile:
-      regexp: '(^disk_full_action\\s*=)(\\s*)'
-      line: "\\1 {{ cent7stig_auditd_config['disk_full_action'] }}"
-      dest: /etc/audit/auditd.conf
-      backrefs: yes
+    regexp: '(^disk_full_action\\s*=)(\\s*)'
+    line: "\\1 {{ cent7stig_auditd_config['disk_full_action'] }}"
+    dest: /etc/audit/auditd.conf
+    backrefs: yes
   tags:
-      - cat2
-      - medium
-      - V-38468
-      - auditd
-      - patch
+    - cat2
+    - medium
+    - V-38468
+    - auditd
+    - patch
 
 - name: "MEDIUM | V-38469 | AUDIT | All system command files must have mode 755 or less permissive."
   script: sys_command_files_with_bad_perms.sh
   become_user: root
   register: system_files_perms_audit
   changed_when: no
-  always_run: yes
+  check_mode: no
   ignore_errors: yes
   tags:
-      - cat2
-      - medium
-      - V-38469
-      - file_perms
-      - always
+    - cat2
+    - medium
+    - V-38469
+    - file_perms
 
 - name: "MEDIUM | V-38469 | PATCH | All system command files must have mode 755 or less permissive"
   file:
-      state: file
-      mode: "og-w"
-      path: "{{ item }}"
+    state: file
+    mode: "og-w"
+    path: "{{ item }}"
   when: system_files_perms_audit.stdout
-  with_items: "{{ system_files_perms_audit.stdout_lines }}"
+  with_items: "{{system_files_perms_audit.stdout_lines}}"
   tags:
-      - cat2
-      - medium
-      - V-38469
-      - file_perms
-      - patch
+    - cat2
+    - medium
+    - V-38469
+    - file_perms
+    - patch
 
 - name: "MEDIUM | V-38470 | AUDIT | The audit system must alert designated staff members when the audit storage volume approaches capacity.."
   shell: grep space_left_action /etc/audit/auditd.conf | cut -d = -f 2 | xargs basename
   register:  space_left_action_audit
   changed_when: no
-  always_run: yes
+  check_mode: no
   ignore_errors: yes
   tags:
-      - cat2
-      - medium
-      - V-38470
-      - auditd
-      - audit
+    - cat2
+    - medium
+    - V-38470
+    - auditd
+    - audit
 
 - name: "MEDIUM | V-38470 | PATCH | The audit system must alert designated staff members when the audit storage volume approaches capacity.."
   lineinfile:
-      regexp: '(^space_left_action\\s*=)(\\s*)'
-      line: "\\1 {{ cent7stig_auditd_config['space_left_action'] }}"
-      dest: /etc/audit/auditd.conf
-      backrefs: yes
+    regexp: '(^space_left_action\\s*=)(\\s*)'
+    line: "\\1 {{ cent7stig_auditd_config['space_left_action'] }}"
+    dest: /etc/audit/auditd.conf
+    backrefs: yes
   tags:
-      - cat2
-      - medium
-      - V-38470
-      - auditd
-      - patch
+    - cat2
+    - medium
+    - V-38470
+    - auditd
+    - patch
 
 - name: "MEDIUM | V-38472 | AUDIT | All system command files must be owned by root"
   script: sys_command_files_with_bad_owner.sh
   become_user: root
   register: sys_commands_owner_audit
-  always_run: yes
+  check_mode: no
   changed_when: no
   ignore_errors: yes
   tags:
-      - cat2
-      - medium
-      - V-38472
-      - file_perms
-      - always
+    - cat2
+    - medium
+    - V-38472
+    - file_perms
 
 - name: "MEDIUM | V-38472 | PATCH | All system command files must be owned by root"
   file:
-      state: file
-      owner: root
+    state: file
+    owner: root
   when: sys_commands_owner_audit.stdout
-  with_items: "{{ sys_commands_owner_audit.stdout_lines }}"
+  with_items: sys_commands_owner_audit.stdout_lines
   tags:
-      - cat2
-      - medium
-      - V-38472
-      - file_perms
-      - patch
+    - cat2
+    - medium
+    - V-38472
+    - file_perms
+    - patch
 
 - name: "MEDIUM | V-38475 | AUDIT | The system must require passwords to contain a minimum of 14 characters."
   shell: grep -E '^PASS_MIN_LEN' /etc/login.defs | awk '{print $2}'
   register: min_pwd_len_audit
   changed_when: no
-  always_run: yes
+  check_mode: no
   ignore_errors: yes
   tags:
-      - cat2
-      - medium
-      - V-38475
-      - passwords
-      - audit
+    - cat2
+    - medium
+    - V-38475
+    - passwords
+    - audit
 
 - name: "MEDIUM | V-38475 | PATCH | The system must require passwords to contain a minimum of 14 characters."
   lineinfile:
-      regexp: '(^PASS_MIN_LEN)\s*(\d*)'
-      line: '\1 {{ cent7stig_pass_min_length }}'
-      dest: /etc/login.defs
-      backrefs: yes
+    regexp: '(^PASS_MIN_LEN)\s*(\d*)'
+    line: '\1 {{ cent7stig_pass_min_length }}'
+    dest: /etc/login.defs
+    backrefs: yes
   tags:
-      - cat2
-      - medium
-      - V-38475
-      - passwords
-      - patch
+    - cat2
+    - medium
+    - V-38475
+    - passwords
+    - patch
 
 - name: "MEDIUM | V-38477 | AUDIT | Users must not be able to change passwords more than once every 24 hours."
   shell: grep -E '^PASS_MIN_DAYS' /etc/login.defs | awk '{print $2}'
   register: pwd_min_days_audit
   changed_when: no
-  always_run: yes
+  check_mode: no
   ignore_errors: yes
   tags:
-      - cat2
-      - medium
-      - V-38477
-      - passwords
-      - audit
+    - cat2
+    - medium
+    - V-38477
+    - passwords
+    - audit
 
 - name: "MEDIUM | V-38477 | PATCH | The system must require passwords to contain a minimum of 14 characters."
   lineinfile:
-      regexp: '(^PASS_MIN_DAYS)\s*(\d*)'
-      line: '\1 {{ cent7stig_pass_min_days }}'
-      dest: /etc/login.defs
-      backrefs: yes
+    regexp: '(^PASS_MIN_DAYS)\s*(\d*)'
+    line: '\1 {{ cent7stig_pass_min_days }}'
+    dest: /etc/login.defs
+    backrefs: yes
   tags:
-      - cat2
-      - medium
-      - V-38477
-      - passwords
-      - patch
+    - cat2
+    - medium
+    - V-38477
+    - passwords
+    - patch
 
 - name: "MEDIUM | V-38479 | AUDIT | User passwords must be changed at least every 60 days."
   shell: grep -E '^PASS_MAX_DAYS' /etc/login.defs | awk '{print $2}'
   register: pwd_max_days_audit
   changed_when: no
-  always_run: yes
+  check_mode: no
   ignore_errors: yes
   tags:
-      - cat2
-      - medium
-      - V-38479
-      - passwords
-      - audit
+    - cat2
+    - medium
+    - V-38479
+    - passwords
+    - audit
 
 - name: "MEDIUM | V-38479 | PATCH | User passwords must be changed at least every 60 days."
   lineinfile:
-      regexp: '(^PASS_MAX_DAYS)\s*(\d*)'
-      line: '\1 {{ cent7stig_pass_max_days }}'
-      dest: /etc/login.defs
-      backrefs: yes
+    regexp: '(^PASS_MAX_DAYS)\s*(\d*)'
+    line: '\1 {{ cent7stig_pass_max_days }}'
+    dest: /etc/login.defs
+    backrefs: yes
   tags:
-      - cat2
-      - medium
-      - V-38479
-      - passwords
-      - patch
+    - cat2
+    - medium
+    - V-38479
+    - passwords
+    - patch
 
 - name: "MEDIUM | V-38481 | AUDIT | System security patches and updates must be installed and up-to-date."
   command: yum check-update
+  args:
+    warn: false
   changed_when: no
   register: yum_pkgs_update_audit
   ignore_errors: yes
   tags:
-      - cat2
-      - medium
-      - V-38481
-      - yum
-      - updates
-      - audit
+    - cat2
+    - medium
+    - V-38481
+    - yum
+    - updates
+    - audit
 
 - name: "MEDIUM | V-38481 | PATCH | System security patches and updates must be installed and up-to-date."
   yum:
-      name: '*'
-      state: latest
-      update_cache: yes
+    name: '*'
+    state: latest
+    update_cache: yes
   when: cent7stig_update_packages
   tags:
-      - cat2
-      - medium
-      - V-38481
-      - yum
-      - updates
-      - patch
+    - cat2
+    - medium
+    - V-38481
+    - yum
+    - updates
+    - patch
 
 - name: "MEDIUM | V-38483 | AUDIT | The system package management tool must cryptographically verify the authenticity of system software packages during installation."
   shell: find /etc/yum{.conf,.repos.d/*.repo} -exec grep -ls '^gpgcheck=0' {} \;
   changed_when: false
-  always_run: yes
+  check_mode: no
   register: repo_crypto_check_audit
   ignore_errors: yes
   tags:
-      - cat2
-      - medium
-      - V-38483
-      - rpm
-      - yum
-      - always
-      - gpgcheck
+    - cat2
+    - medium
+    - V-38483
+    - rpm
+    - yum
+    - gpgcheck
 
 - name: "MEDIUM | V-38483 | PATCH | The system package management tool must cryptographically verify the authenticity of system software packages during installation."
   replace:
-      backup: yes
-      dest: '{{ item }}'
-      regexp: '^gpgcheck=0'
-      replace: 'gpgcheck=1'
+    backup: yes
+    dest: '{{ item }}'
+    regexp: '^gpgcheck=0'
+    replace: 'gpgcheck=1'
   with_flattened:
     - /etc/yum.conf
-    - "{{ repo_crypto_check_audit.stdout_lines }}"
+    - repo_crypto_check_audit.stdout_lines
   tags:
-      - cat2
-      - medium
-      - V-38483
-      - rpm
-      - gpgcheck
-      - patch
+    - cat2
+    - medium
+    - V-38483
+    - rpm
+    - gpgcheck
+    - patch
 
 - name: "MEDIUM | V-38484 | AUDIT | The operating system, upon successful logon, must display to the user the date and time of the last logon or access via ssh."
   shell: grep -i "^PrintLastLog" /etc/ssh/sshd_config | awk '{ print $2 }'
   register: last_log_audit
   changed_when: no
-  always_run: yes
+  check_mode: no
   ignore_errors: yes
   tags:
-      - medium
-      - cat2
-      - V-38484
-      - sshd
-      - audit
+    - medium
+    - cat2
+    - V-38484
+    - sshd
+    - audit
 
 - name: "MEDIUM | V-38484 | PATCH | The operating system, upon successful logon, must display to the user the date and time of the last logon or access via ssh."
   lineinfile:
-      regexp: '(^PrintLastLog)\s*(\d*)'
-      line: '\1 yes'
-      dest: /etc/ssh/sshd_config
-      backrefs: yes
+    regexp: '(^PrintLastLog)\s*(\d*)'
+    line: '\1 yes'
+    dest: /etc/ssh/sshd_config
+    backrefs: yes
 
   tags:
-      - medium
-      - cat2
-      - V-38484
-      - sshd
-      - patch
+    - medium
+    - cat2
+    - V-38484
+    - sshd
+    - patch
 
 - name: "MEDIUM | V-38484 | PATCH | The operating system, upon successful logon, must display to the user the date and time of the last logon or access via ssh."
   lineinfile:
-      line: 'PrintLastLog yes'
-      dest: /etc/ssh/sshd_config
+    line: 'PrintLastLog yes'
+    dest: /etc/ssh/sshd_config
   tags:
-      - medium
-      - cat2
-      - V-38484
-      - sshd
-      - patch
+    - medium
+    - cat2
+    - V-38484
+    - sshd
+    - patch
 
 # V-38486 cannot be automated
 # V-38488 cannot be automated
@@ -515,65 +514,65 @@
   command: rpm -q aide
   register: aide_installed_audit
   changed_when: no
-  always_run: yes
+  check_mode: no
   ignore_errors: yes
   tags:
-      - medium
-      - cat2
-      - V-38489
-      - audit
-      - aide
-      - integrity
+    - medium
+    - cat2
+    - V-38489
+    - audit
+    - aide
+    - integrity
 
 - name: "MEDIUM | V-38489 | PATCH | A file integrity tool must be installed."
   yum:
-      name: aide
-      state: present
+    name: aide
+    state: present
   when: cent7stig_install_packages
   tags:
-      - medium
-      - cat2
-      - V-38489
-      - audit
-      - aide
-      - integrity
+    - medium
+    - cat2
+    - V-38489
+    - audit
+    - aide
+    - integrity
 
 - name: "MEDIUM | V-38490 | AUDIT | The operating system must enforce requirements for the connection of mobile devices to operating systems"
   shell: "test -f /etc/modprobe.d/disable-usb.conf || grep -r usb-storage /etc/modprobe.conf || grep -r usb-storage /etc/modprobe.d"
   register: usb_reqs_audit
-  always_run: yes
+  check_mode: no
   changed_when: no
   ignore_errors: yes
   tags:
-      - medium
-      - cat2
-      - V-38490
-      - mobile_devices
-      - usb_devices
-      - kernel_modules
-      - audit
+    - medium
+    - cat2
+    - V-38490
+    - mobile_devices
+    - usb_devices
+    - kernel_modules
+    - audit
 
 - name: "MEDIUM | V-38490 | PATCH | The operating system must enforce requirements for the connection of mobile devices to operating systems"
   copy:
-      backup: no
-      src: disable-usb.conf
-      dest: /etc/modprobe.d/disable-usb.conf
-      owner: root
-      group: root
-      mode: "0644"
+    backup: no
+    src: disable-usb.conf
+    dest: /etc/modprobe.d/disable-usb.conf
+    owner: root
+    group: root
+    mode: "0644"
   tags:
-      - medium
-      - cat2
-      - V-38490
-      - mobile_devices
-      - usb_devices
-      - kernel_modules
-      - patch
+    - medium
+    - cat2
+    - V-38490
+    - mobile_devices
+    - usb_devices
+    - kernel_modules
+    - patch
 
 - name: "MEDIUM | V-38492 | AUDIT | The system must prevent the root account from logging in from virtual consoles."
   command: grep '^vc/[0-9]' /etc/securetty
   register: vc_root_login_audit
-  always_run: yes
+  check_mode: no
   changed_when: no
   failed_when: vc_root_login_audit.stdout_lines|length > 0
   ignore_errors: yes
@@ -589,142 +588,137 @@
 
 - name: "MEDIUM | V-38492 | PATCH | The system must prevent the root account from logging in from virtual consoles"
   lineinfile:
-      state: absent
-      dest: /etc/securetty
-      regexp: '^.*vc/?\d'
-      backup: yes
+    state: absent
+    dest: /etc/securetty
+    regexp: '^.*vc/?\d'
+    backup: yes
   tags:
-      - cat2
-      - V-38492
-      - root_access
-      - logon_settings
-      - tty
-      - virtual_consoles
-      - medium
-      - patch
+    - cat2
+    - V-38492
+    - root_access
+    - logon_settings
+    - tty
+    - virtual_consoles
+    - medium
+    - patch
 
 - name: "MEDIUM | V-38493 | AUDIT | Audit log directories must have mode 0755 or less permissive."
   shell: grep "^log_file" /etc/audit/auditd.conf|sed 's/^[^/]*//; s/[^/]*$//' | xargs -I % find % -type d -perm /022
   changed_when: no
-  always_run: yes
+  check_mode: no
   register: audit_log_dir_perms_audit
   ignore_errors: yes
   tags:
-      - cat2
-      - V-38493
-      - medium
-      - file_perms
-      - auditd
-      - audit_permissions
-      - always
+    - cat2
+    - V-38493
+    - medium
+    - file_perms
+    - auditd
+    - audit_permissions
 
 - name: "MEDIUM | V-38493 | PATCH | Audit log directories must have mode 0755 or less permissive."
   file:
-      state: directory
-      mode: "go-w"
-      path: "{{ item }}"
-  with_items: "{{ audit_log_dir_perms_audit.stdout_lines }}"
+    state: directory
+    mode: "go-w"
+    path: "{{ item }}"
+  with_items: audit_log_dir_perms_audit.stdout_lines
   when: audit_log_dir_perms_audit.stdout
   tags:
-      - cat2
-      - V-38493
-      - medium
-      - file_perms
-      - auditd
-      - audit_permissions
-      - patch
+    - cat2
+    - V-38493
+    - medium
+    - file_perms
+    - auditd
+    - audit_permissions
+    - patch
 
 - name: "MEDIUM | V-38495 | AUDIT | Audit log files must be owned by root."
   shell: grep "^log_file" /etc/audit/auditd.conf|sed 's/^[^/]*//; s/[^/]*$//' | xargs -I % find % -type f ! -user root
   changed_when: no
-  always_run: yes
+  check_mode: no
   register: audit_log_dir_owner_audit
   ignore_errors: yes
   tags:
-      - cat2
-      - V-38495
-      - medium
-      - file_perms
-      - auditd
-      - audit_permissions
-      - always
+    - cat2
+    - V-38495
+    - medium
+    - file_perms
+    - auditd
+    - audit_permissions
 
 - name: "MEDIUM | V-38495 | PATCH | Audit log files must be owned by root."
   file:
-      state: file
-      owner: root
-      path: "{{ item }}"
-  with_items: "{{ audit_log_dir_owner_audit.stdout_lines }}"
+    state: file
+    owner: root
+    path: "{{ item }}"
+  with_items: audit_log_dir_owner_audit.stdout_lines
   when: audit_log_dir_owner_audit.stdout
   tags:
-      - cat2
-      - V-38495
-      - medium
-      - file_perms
-      - auditd
-      - audit_permissions
-      - patch
+    - cat2
+    - V-38495
+    - medium
+    - file_perms
+    - auditd
+    - audit_permissions
+    - patch
 
 - name: "MEDIUM | V-38496 | AUDIT | Default system accounts, other than root, must be locked"
   shell: >
    awk -F: '$1 !~ /^root$/ && $2 !~ /^[!*]/ {print $1}' /etc/shadow | xargs -I{} grep {} /etc/passwd | awk -F: '$3 < 500 {print $1}'
   register: unlocked_sys_accounts_audit
   changed_when: false
-  always_run: yes
+  check_mode: no
   ignore_errors: yes
   tags:
-      - cat2
-      - medium
-      - V-38496
-      - always
-      - accounts
-      - system_accounts
+    - cat2
+    - medium
+    - V-38496
+    - accounts
+    - system_accounts
 
 - name: "MEDIUM | V-38496 | PATCH | Default system accounts, other than root, must be locked"
   user:
-      name: "{{ item }}"
-      state: present
-      expires: 1412541480
-  with_items: "{{ unlocked_sys_accounts_audit.stdout_lines }}"
+    name: "{{ item }}"
+    state: present
+    expires: 1412541480
+  with_items: unlocked_sys_accounts_audit.stdout_lines
   when: unlocked_sys_accounts_audit.stdout
   tags:
-      - cat2
-      - medium
-      - V-38496
-      - patch
-      - accounts
-      - system_accounts
+    - cat2
+    - medium
+    - V-38496
+    - patch
+    - accounts
+    - system_accounts
 
 - name: "MEDIUM | V-38498 | AUDIT | Audit log files must have mode 0640 or less permissive."
   shell: grep "^log_file" /etc/audit/auditd.conf|sed s/^[^\/]*//|xargs stat -c %n | xargs -I % find % -perm /137
   register: audit_log_file_perms_audit
   changed_when: no
-  always_run: yes
+  check_mode: no
   ignore_errors: yes
   tags:
-      - medium
-      - cat2
-      - auditd
-      - always
-      - logs
-      - V-38498
-      - file_perms
+    - medium
+    - cat2
+    - auditd
+    - logs
+    - V-38498
+    - file_perms
 
 - name: "MEDIUM | V-38498 | PATCH | Audit log files must have mode 0640 or less permissive."
   file:
-      state: file
-      path: "{{ item }}"
-      mode: "u-x,g-wx,o-rwx"
-  ignore_errors: yes
-  with_items: "{{ audit_log_file_perms_audit.stdout_lines }}"
+    state: file
+    path: "{{ item }}"
+    mode: "u-x,g-wx,o-rwx"
+  with_items: "{{audit_log_file_perms_audit.stdout_lines}}"
   tags:
-      - medium
-      - cat2
-      - auditd
-      - patch
-      - logs
-      - V-38498
-      - file_perms
+    - medium
+    - cat2
+    - auditd
+    - patch
+    - logs
+    - V-38498
+    - file_perms
 
 # V-38499 is checked but not automatically patched, please see not_automated.yml
 # V-38500 is checked but not automatically patched, please see not_automated.yml
@@ -732,430 +726,425 @@
 - name: "MEDIUM | V-38501 | AUDIT | The system must disable accounts after excessive login failures within a 15-minute interval."
   shell: grep -h pam_faillock /etc/pam.d/system-auth /etc/pam.d/password-auth | grep fail_interval | awk -F'=' '{print $NF}'
   changed_when: no
-  always_run: yes
+  check_mode: no
   register: login_failures_interval
   ignore_errors: yes
   tags:
-      - medium
-      - cat2
-      - logon_settings
-      - audit
-      - V-38501
-      - pam
+    - medium
+    - cat2
+    - logon_settings
+    - audit
+    - V-38501
+    - pam
 
 - name: "MEDIUM | V-38501 | AUDIT | The system must disable accounts after excessive login failures within a 15-minute interval."
   shell: grep -hG '^account\s*required\s*pam_faillock\.so' /etc/pam.d/system-auth /etc/pam.d/password-auth
   changed_when: no
-  always_run: yes
+  check_mode: no
   register: login_failures_account_require
   failed_when: login_failures_account_require.stdout_lines|length > 0
   ignore_errors: yes
   tags:
-      - medium
-      - cat2
-      - logon_settings
-      - audit
-      - V-38501
-      - pam
+    - medium
+    - cat2
+    - logon_settings
+    - audit
+    - V-38501
+    - pam
 
 - name: "MEDIUM | V-38501 | AUDIT | The system must disable accounts after excessive login failures within a 15-minute interval."
   assert:
-      that: "{{ item | integer }} > 900"
-      that: "{{ login_failures_account_require.stdout_lines | length }} == 2"
-  with_items: "{{ login_failures_interval.stdout_lines }}"
+    that:
+      - "{{ item | integer }} > 900"
+      - "{{ login_failures_account_require.stdout_lines | length }} == 2"
+  with_items: "{{login_failures_interval.stdout_lines}}"
   register: login_failures_interval_audit
   ignore_errors: yes
   tags:
-      - medium
-      - cat2
-      - logon_settings
-      - audit
-      - V-38501
-      - pam
+    - medium
+    - cat2
+    - logon_settings
+    - audit
+    - V-38501
+    - pam
 
 - name: "MEDIUM | V-38501 | PATCH | The system must disable accounts after excessive login failures within a 15-minute interval."
-  pamd:
-      name: "{{ item }}"
-      new_control: required
-      new_module_path: pam_faillock.so
-      new_type: auth
-      type: auth
-      module_path: pam_unix.so
-      control: sufficient
-      module_arguments: preauth silent deny=3 unlock_time=604800 fail_interval=900
-      state: before
+  pam:
+    service: "{{ item }}"
+    type: auth
+    control: required
+    pam_module: pam_faillock.so
+    before_line: auth sufficient pam_unix.so
+    arguments: preauth silent deny=3 unlock_time=604800 fail_interval=900
+    state: present
   with_items:
-      - password-auth
-      - system-auth
+    - password-auth
+    - system-auth
   tags:
-      - medium
-      - cat2
-      - logon_settings
-      - patch
-      - V-38501
-      - pam
+    - medium
+    - cat2
+    - logon_settings
+    - patch
+    - V-38501
+    - pam
 
 - name: "MEDIUM | V-38501 | PATCH | The system must disable accounts after excessive login failures within a 15-minute interval."
-  pamd:
-      name: "{{ item }}"
-      new_type: auth
-      new_control: '[default=die]'
-      new_module_path: pam_faillock.so
-      type: auth
-      control: sufficient
-      module_path: pam_unix.so
-      module_arguments: authfail deny=3 unlock_time=604800 fail_interval=900
-      state: after
+  pam:
+    service: "{{ item }}"
+    type: auth
+    control: '[default=die]'
+    pam_module: pam_faillock.so
+    after_line: auth sufficient pam_unix.so
+    arguments: authfail deny=3 unlock_time=604800 fail_interval=900
+    state: present
   with_items:
-      - password-auth
-      - system-auth
+    - password-auth
+    - system-auth
   tags:
-      - medium
-      - cat2
-      - logon_settings
-      - patch
-      - V-38501
-      - pam
+    - medium
+    - cat2
+    - logon_settings
+    - patch
+    - V-38501
+    - pam
 
 - name: |
-         MEDIUM | V-38502 | AUDIT | The /etc/shadow file must be owned by root.
-         MEDIUM | V-38503 | AUDIT | The /etc/shadow file must be group-owned by root.
-         MEDIUM | V-38504 | AUDIT | The /etc/shadow file must have mode 0000.
+     MEDIUM | V-38502 | AUDIT | The /etc/shadow file must be owned by root.
+     MEDIUM | V-38503 | AUDIT | The /etc/shadow file must be group-owned by root.
+     MEDIUM | V-38504 | AUDIT | The /etc/shadow file must have mode 0000.
   stat:
-      path: /etc/shadow
+    path: /etc/shadow
   register: shadow_owner_audit
   ignore_errors: yes
   tags:
-      - medium
-      - cat2
-      - V-38502
-      - shadow
-      - file_perms
-      - audit
+    - medium
+    - cat2
+    - V-38502
+    - shadow
+    - file_perms
+    - audit
 
 - name: "MEDIUM | V-38502 | PATCH | The /etc/shadow file must be owned by root."
   file:
-      state: file
-      owner: root
-      path: /etc/shadow
+    state: file
+    owner: root
+    path: /etc/shadow
   tags:
-      - medium
-      - cat2
-      - V-38502
-      - shadow
-      - file_perms
-      - patch
+    - medium
+    - cat2
+    - V-38502
+    - shadow
+    - file_perms
+    - patch
 
 - name: "MEDIUM | V-38503 | PATCH | The /etc/shadow file must be group-owned by root."
   file:
-      state: file
-      group: root
-      path: /etc/shadow
+    state: file
+    group: root
+    path: /etc/shadow
   tags:
-      - medium
-      - cat2
-      - V-38503
-      - shadow
-      - file_perms
-      - patch
+    - medium
+    - cat2
+    - V-38503
+    - shadow
+    - file_perms
+    - patch
 
 - name: "MEDIUM | V-38504 | PATCH | The /etc/shadow file must have mode 0000."
   file:
-      state: file
-      mode: "0000"
-      path: /etc/shadow
+    state: file
+    mode: "0000"
+    path: /etc/shadow
   tags:
-      - medium
-      - cat2
-      - V-38504
-      - shadow
-      - file_perms
-      - patch
+    - medium
+    - cat2
+    - V-38504
+    - shadow
+    - file_perms
+    - patch
 
 - name: "MEDIUM | V-38511 | AUDIT | IP forwarding for IPv4 must not be enabled, unless the system is a router."
   shell: sysctl net.ipv4.ip_forward | awk '{print $3}'
   changed_when: no
-  always_run: yes
+  check_mode: no
   register: ipv4_ip_forwarding_audit
   ignore_errors: yes
   tags:
-      - V-38511
-      - cat2
-      - medium
-      - ip_forward
-      - ipv4
-      - audit
+    - V-38511
+    - cat2
+    - medium
+    - ip_forward
+    - ipv4
+    - audit
 
 - name: "MEDIUM | V-38511 | AUDIT | IP forwarding for IPv4 must not be enabled, unless the system is a router."
   shell: sysctl net.ipv4.ip_forward | awk '{print $3}'
   changed_when: no
-  always_run: yes
+  check_mode: no
   register: ipv4_ip_forwarding_audit
   ignore_errors: yes
   tags:
-      - V-38511
-      - cat2
-      - medium
-      - ip_forward
-      - ipv4
-      - audit
+    - V-38511
+    - cat2
+    - medium
+    - ip_forward
+    - ipv4
+    - audit
 
 - name: "MEDIUM | V-38511 | PATCH | IP forwarding for IPv4 must not be enabled unless the system is a router"
   sysctl:
-      name: net.ipv4.ip_forward
-      value: 0
-      state: present
-      reload: yes
+    name: net.ipv4.ip_forward
+    value: 0
+    state: present
+    reload: yes
   when: not cent7stig_system_is_router
   tags:
-      - cat2
-      - V-38511
-      - kernel_parameters
-      - network
-      - medium
-      - patch
+    - cat2
+    - V-38511
+    - kernel_parameters
+    - network
+    - medium
+    - patch
 
 ## the ansible script is going to assume iptables over firewalld.. this provides cent6 > cent 7 migration and provides better docker support
 - name: "MEDIUM | V-38512 | AUDIT | The operating system must prevent public IPv4 access into an organizations internal networks except as appropriately mediated by managed interfaces employing boundary protection devices"
   command: chkconfig 'iptables' --list
-  always_run: yes
+  check_mode: no
   changed_when: no
   register: iptables_audit
   failed_when: "'No such file or directory' not in iptables_audit.stderr"
   ignore_errors: yes
   tags:
-      - V-38512
-      - ipv4
-      - network
-      - firewall
-      - medium
-      - cat2
-      - audit
+    - V-38512
+    - ipv4
+    - network
+    - firewall
+    - medium
+    - cat2
+    - audit
 
 - name: "MEDIUM | V-38512 | PATCH | The operating system must prevent public IPv4 access into an organizations internal networks except as appropriately mediated by managed interfaces employing boundary protection devices"
   yum:
-      name: iptables-services
-      state: present
+    name: iptables-services
+    state: present
   when: cent7stig_install_packages
   tags:
-      - V-38512
-      - ipv4
-      - network
-      - firewall
-      - medium
-      - cat2
-      - patch
+    - V-38512
+    - ipv4
+    - network
+    - firewall
+    - medium
+    - cat2
+    - patch
 
 - name: "MEDIUM | V-38512 | PATCH | The operating system must prevent public IPv4 access into an organizations internal networks except as appropriately mediated by managed interfaces employing boundary protection devices"
   service:
-      name: firewalld
-      enabled: no
-      state: stopped
-  ignore_errors: yes
+    name: firewalld
+    enabled: no
+    state: stopped
   tags:
-      - V-38512
-      - ipv4
-      - network
-      - firewall
-      - medium
-      - cat2
-      - patch
+    - V-38512
+    - ipv4
+    - network
+    - firewall
+    - medium
+    - cat2
+    - patch
 
 - name: "MEDIUM | V-38512 | PATCH | The operating system must prevent public IPv4 access into an organizations internal networks except as appropriately mediated by managed interfaces employing boundary protection devices"
   service:
-      name: iptables
-      enabled: yes
-      state: started
+    name: iptables
+    enabled: yes
+    state: started
   tags:
-      - V-38512
-      - ipv4
-      - network
-      - firewall
-      - medium
-      - cat2
-      - patch
+    - V-38512
+    - ipv4
+    - network
+    - firewall
+    - medium
+    - cat2
+    - patch
 
 - name: "MEDIUM | V-38513 | AUDIT | The systems local IPv4 firewall must implement a deny-all, allow-by-exception policy for inbound packets."
   shell: grep ":INPUT" /etc/sysconfig/iptables | awk '{print $2}'
   changed_when: no
-  always_run: yes
+  check_mode: no
   register: ipv4_fw_deny_all_audit
   ignore_errors: yes
   tags:
-      - V-38513
-      - ipv4
-      - network
-      - firewall
-      - medium
-      - cat2
-      - audit
+    - V-38513
+    - ipv4
+    - network
+    - firewall
+    - medium
+    - cat2
+    - audit
 
 - name: "MEDIUM | V-38513 | PATCH | The systems local IPv4 firewall must implement a deny-all, allow-by-exception policy for inbound packets."
   lineinfile:
-      state: present
-      dest: /etc/sysconfig/iptables
-      regexp: ':INPUT'
-      line: ':INPUT DROP [0:0]'
+    state: present
+    dest: /etc/sysconfig/iptables
+    regexp: ':INPUT'
+    line: ':INPUT DROP [0:0]'
   notify: restart iptables
   tags:
-      - cat2
-      - medium
-      - V-38513
-      - ipv4
-      - firewall
-      - network
-      - patch
+    - cat2
+    - medium
+    - V-38513
+    - ipv4
+    - firewall
+    - network
+    - patch
 
 - name: "MEDIUM | V-38514 | AUDIT | The Datagram Congestion Control Protocol (DCCP) must be disabled unless required."
   command: grep -rse "^install\s*dccp\s*/bin/true$" /etc/modprobe.conf /etc/modprobe.d
   changed_when: no
-  always_run: yes
+  check_mode: no
   register: dccp_audit
   ignore_errors: yes
   tags:
-      - V-38514
-      - cat2
-      - medium
-      - dccp
-      - transport
-      - audit
+    - V-38514
+    - cat2
+    - medium
+    - dccp
+    - transport
+    - audit
 
 - name: "MEDIUM | V-38514 | PATCH | The Datagram Congestion Control Protocol (DCCP) must be disabled unless required."
   lineinfile:
-      state: present
-      create: yes
-      line: install dccp /bin/true
-      dest: /etc/modprobe.d/disable-dccp.conf
-      owner: root
-      group: root
-      mode: "0644"
+    state: present
+    create: yes
+    line: install dccp /bin/true
+    dest: /etc/modprobe.d/disable-dccp.conf
+    owner: root
+    group: root
+    mode: "0644"
   tags:
-      - V-38514
-      - cat2
-      - medium
-      - dccp
-      - transport
-      - patch
+    - V-38514
+    - cat2
+    - medium
+    - dccp
+    - transport
+    - patch
 
 - name: "MEDIUM | V-38515 | AUDIT | The Stream Control Transmission Protocol (SCTP) must be disabled unless required."
   command: grep -rse "^install\s*sctp\s*/bin/true$" /etc/modprobe.conf /etc/modprobe.d
   changed_when: no
-  always_run: yes
+  check_mode: no
   register: sctp_audit
   ignore_errors: yes
   tags:
-      - V-38515
-      - cat2
-      - medium
-      - sctp
-      - transport
-      - audit
+    - V-38515
+    - cat2
+    - medium
+    - sctp
+    - transport
+    - audit
 
 - name: "MEDIUM | V-38515 | PATCH | The Stream Control Transmission Protocol (SCTP) must be disabled unless required."
   lineinfile:
-      state: present
-      create: yes
-      line: install sctp /bin/true
-      dest: /etc/modprobe.d/disable-sctp.conf
-      owner: root
-      group: root
-      mode: "0644"
+    state: present
+    create: yes
+    line: install sctp /bin/true
+    dest: /etc/modprobe.d/disable-sctp.conf
+    owner: root
+    group: root
+    mode: "0644"
   tags:
-      - V-38515
-      - cat2
-      - medium
-      - sctp
-      - transport
-      - patch
+    - V-38515
+    - cat2
+    - medium
+    - sctp
+    - transport
+    - patch
 
 - name: "MEDIUM | V-38516 | AUDIT | The Transparent Inter-Process Communication (TIPC) protocol must be disabled unless required."
   command: grep -rse "^install\s*tipc\s*/bin/true$" /etc/modprobe.conf /etc/modprobe.d
   changed_when: no
-  always_run: yes
+  check_mode: no
   register: tipc_audit
   ignore_errors: yes
   tags:
-      - V-38516
-      - cat2
-      - medium
-      - tipc
-      - transport
-      - audit
+    - V-38516
+    - cat2
+    - medium
+    - tipc
+    - transport
+    - audit
 
 - name: "MEDIUM | V-38516 | PATCH | The Transparent Inter-Process Communication (TIPC) protocol must be disabled unless required."
   lineinfile:
-      state: present
-      create: yes
-      line: install tipc /bin/true
-      dest: /etc/modprobe.d/disable-tipc.conf
-      owner: root
-      group: root
-      mode: "0644"
+    state: present
+    create: yes
+    line: install tipc /bin/true
+    dest: /etc/modprobe.d/disable-tipc.conf
+    owner: root
+    group: root
+    mode: "0644"
   tags:
-      - V-38516
-      - cat2
-      - medium
-      - tipc
-      - transport
-      - patch
+    - V-38516
+    - cat2
+    - medium
+    - tipc
+    - transport
+    - patch
 
 - name: "MEDIUM | V-38518 | AUDIT | All rsyslog-generated log files must be owned by root."
   shell: grep -e "/" /etc/rsyslog.conf /etc/rsyslog.d/* | grep -v ':\$' | sed 's/-//'| awk 'NF==2 {print $2}'
   changed_when: no
-  always_run: yes
+  check_mode: no
   register: rsyslog_logfiles
   ignore_errors: yes
   tags:
-      - cat2
-      - medium
-      - V-38518
-      - log_files
-      - rsyslog
-      - always
+    - cat2
+    - medium
+    - V-38518
+    - log_files
+    - rsyslog
 
 - name: "MEDIUM | V-38518 | AUDIT | All rsyslog-generated log files must be owned by root."
   stat:
-      path: "{{ item }}"
-  with_items: "{{ rsyslog_logfiles.stdout_lines }}"
+    path: "{{ item }}"
+  with_items: rsyslog_logfiles.stdout_lines
   register: rsyslog_logfiles_audit
   ignore_errors: yes
   tags:
-      - cat2
-      - medium
-      - V-38518
-      - log_files
-      - rsyslog
-      - audit
+    - cat2
+    - medium
+    - V-38518
+    - log_files
+    - rsyslog
+    - audit
 
 - name: "MEDIUM | V-38518 | PATCH | All rsyslog-generated log files must be owned by root."
   file:
-      path: "{{ item }}"
-      owner: root
-      follow: yes
-      state: file
-  with_items: "{{ rsyslog_logfiles.stdout_lines }}"
+    path: "{{ item }}"
+    owner: root
+    follow: yes
+    state: file
+  with_items: "{{rsyslog_logfiles.stdout_lines}}"
   tags:
-      - cat2
-      - medium
-      - V-38518
-      - log_files
-      - rsyslog
-      - patch
+    - cat2
+    - medium
+    - V-38518
+    - log_files
+    - rsyslog
+    - patch
 
 - name: "MEDIUM | V-38519 | PATCH | All rsyslog-generated log files must be group-owned by root."
   file:
-      dest: "{{ item }}"
-      group: root
-      state: file
-      follow: yes
-  with_items: "{{ rsyslog_logfiles.stdout_lines }}"
+    dest: "{{ item }}"
+    group: root
+    state: file
+    follow: yes
+  with_items: "{{rsyslog_logfiles.stdout_lines}}"
   tags:
-      - cat2
-      - medium
-      - V-38519
-      - log_files
-      - rsyslog
-      - patch
+    - cat2
+    - medium
+    - V-38519
+    - log_files
+    - rsyslog
+    - patch
 
 # V-38520 not automatically remediated. See not_automated.yml
 # V-38521 not automatically remediated. See not_automated.yml
@@ -1163,610 +1152,601 @@
 - name: "MEDIUM | V-38523 | AUDIT | The system must not accept IPv4 source-routed packets on any interface."
   shell: sysctl net.ipv4.conf.all.accept_source_route | awk '{print $3}'
   changed_when: no
-  always_run: yes
+  check_mode: no
   register: ipv4_source_routed_packets_any_int_audit
   ignore_errors: yes
   tags:
-      - medium
-      - cat2
-      - V-38523
-      - audit
-      - ipv4
-      - sysctl
-      - kernel_parameters
-      - network
+    - medium
+    - cat2
+    - V-38523
+    - audit
+    - ipv4
+    - sysctl
+    - kernel_parameters
+    - network
 
 - name: "MEDIUM | V-38523 | PATCH | The system must not accept IPv4 source-routed packets on any interface."
   sysctl:
-      name: net.ipv4.conf.all.accept_source_route
-      value: 0
-      state: present
-      reload: yes
+    name: net.ipv4.conf.all.accept_source_route
+    value: 0
+    state: present
+    reload: yes
   tags:
-      - medium
-      - cat2
-      - V-38523
-      - patch
-      - ipv4
-      - sysctl
-      - kernel_parameters
-      - network
+    - medium
+    - cat2
+    - V-38523
+    - patch
+    - ipv4
+    - sysctl
+    - kernel_parameters
+    - network
 
 - name: "MEDIUM | V-38524 | AUDIT | The system must not accept ICMPv4 redirect packets on any interface."
   shell: sysctl net.ipv4.conf.all.accept_redirects | awk '{print $3}'
   changed_when: no
-  always_run: yes
+  check_mode: no
   register: icmpv4_redirect_packets_any_int_audit
   ignore_errors: yes
   tags:
-      - medium
-      - cat2
-      - V-38524
-      - audit
-      - ICMPv4
-      - sysctl
-      - kernel_parameters
-      - network
+    - medium
+    - cat2
+    - V-38524
+    - audit
+    - ICMPv4
+    - sysctl
+    - kernel_parameters
+    - network
 
 - name: "MEDIUM | V-38524 | PATCH | The system must not accept ICMPv4 redirect packets on any interface."
   sysctl:
-      name: net.ipv4.conf.all.accept_redirects
-      value: 0
-      state: present
-      reload: yes
+    name: net.ipv4.conf.all.accept_redirects
+    value: 0
+    state: present
+    reload: yes
   tags:
-      - medium
-      - cat2
-      - V-38524
-      - patch
-      - ICMPv4
-      - sysctl
-      - kernel_parameters
-      - network
+    - medium
+    - cat2
+    - V-38524
+    - patch
+    - ICMPv4
+    - sysctl
+    - kernel_parameters
+    - network
 
 - name: "MEDIUM | V-38526 | AUDIT | The system must not accept ICMPv4 secure redirect packets on any interface."
   shell: sysctl net.ipv4.conf.all.secure_redirects | awk '{print $3}'
   changed_when: no
-  always_run: yes
+  check_mode: no
   register: icmpv4_secure_redirect_packets_any_int_audit
   ignore_errors: yes
   tags:
-      - medium
-      - cat2
-      - V-38526
-      - audit
-      - ICMPv4
-      - sysctl
-      - kernel_parameters
-      - network
+    - medium
+    - cat2
+    - V-38526
+    - audit
+    - ICMPv4
+    - sysctl
+    - kernel_parameters
+    - network
 
 - name: "MEDIUM | V-38526 | PATCH | The system must not accept ICMPv4 secure redirect packets on any interface."
   sysctl:
-      name: net.ipv4.conf.all.secure_redirects
-      value: 0
-      state: present
-      reload: yes
+    name: net.ipv4.conf.all.secure_redirects
+    value: 0
+    state: present
+    reload: yes
   tags:
-      - medium
-      - cat2
-      - V-38526
-      - patch
-      - ICMPv4
-      - sysctl
-      - kernel_parameters
-      - network
+    - medium
+    - cat2
+    - V-38526
+    - patch
+    - ICMPv4
+    - sysctl
+    - kernel_parameters
+    - network
 
 - name: "MEDIUM | V-38529 | AUDIT | The system must not accept IPv4 source-routed packets by default."
   shell: sysctl net.ipv4.conf.default.accept_source_route | awk '{print $3}'
   changed_when: no
-  always_run: yes
+  check_mode: no
   register: ipv4_source_routed_packets_default_audit
   ignore_errors: yes
   tags:
-      - medium
-      - cat2
-      - V-38529
-      - audit
-      - ipv4
-      - sysctl
-      - kernel_parameters
-      - network
+    - medium
+    - cat2
+    - V-38529
+    - audit
+    - ipv4
+    - sysctl
+    - kernel_parameters
+    - network
 
 - name: "MEDIUM | V-38529 | PATCH | The system must not accept IPv4 source-routed packets by default."
   sysctl:
-      name: net.ipv4.conf.default.accept_source_route
-      value: 0
-      state: present
-      reload: yes
+    name: net.ipv4.conf.default.accept_source_route
+    value: 0
+    state: present
+    reload: yes
   tags:
-      - medium
-      - cat2
-      - V-38529
-      - patch
-      - ipv4
-      - sysctl
-      - kernel_parameters
-      - network
+    - medium
+    - cat2
+    - V-38529
+    - patch
+    - ipv4
+    - sysctl
+    - kernel_parameters
+    - network
 
 - name: "MEDIUM | V-38532 | AUDIT | The system must not accept ICMPv4 secure redirect packets by default."
   shell: sysctl net.ipv4.conf.default.secure_redirects | awk '{print $3}'
   changed_when: no
-  always_run: yes
+  check_mode: no
   register: icmpv4_secure_redirects_default_audit
   ignore_errors: yes
   tags:
-      - medium
-      - cat2
-      - V-38532
-      - audit
-      - ICMPv4
-      - sysctl
-      - kernel_parameters
-      - network
+    - medium
+    - cat2
+    - V-38532
+    - audit
+    - ICMPv4
+    - sysctl
+    - kernel_parameters
+    - network
 
 - name: "MEDIUM | V-38532 | PATCH | The system must not accept ICMPv4 secure redirect packets by default."
   sysctl:
-      name: net.ipv4.conf.default.secure_redirects
-      value: 0
-      state: present
-      reload: yes
+    name: net.ipv4.conf.default.secure_redirects
+    value: 0
+    state: present
+    reload: yes
   tags:
-      - medium
-      - cat2
-      - V-38532
-      - patch
-      - ICMPv4
-      - sysctl
-      - kernel_parameters
-      - network
+    - medium
+    - cat2
+    - V-38532
+    - patch
+    - ICMPv4
+    - sysctl
+    - kernel_parameters
+    - network
 
 - name: "MEDIUM | V-38539 | AUDIT | The system must be configured to use TCP syncookies when experiencing a TCP SYN flood."
   shell: sysctl net.ipv4.tcp_syncookies | awk '{print $3}'
   changed_when: no
-  always_run: yes
+  check_mode: no
   register: tcp_syncookies_audit
   ignore_errors: yes
   tags:
-      - medium
-      - cat2
-      - V-38539
-      - audit
-      - tcp
-      - sysctl
-      - kernel_parameters
-      - network
+    - medium
+    - cat2
+    - V-38539
+    - audit
+    - tcp
+    - sysctl
+    - kernel_parameters
+    - network
 
 - name: "MEDIUM | V-38539 | PATCH | The system must be configured to use TCP syncookies when experiencing a TCP SYN flood."
   sysctl:
-      name: net.ipv4.tcp_syncookies
-      value: 1
-      state: present
-      reload: yes
+    name: net.ipv4.tcp_syncookies
+    value: 1
+    state: present
+    reload: yes
   tags:
-      - medium
-      - cat2
-      - V-38539
-      - patch
-      - tcp
-      - sysctl
-      - kernel_parameters
-      - network
+    - medium
+    - cat2
+    - V-38539
+    - patch
+    - tcp
+    - sysctl
+    - kernel_parameters
+    - network
 
 - name: "MEDIUM | V-38542 | AUDIT | The system must use a reverse-path filter for IPv4 network traffic when possible on all interfaces."
   shell: sysctl net.ipv4.conf.all.rp_filter | awk '{print $3}'
   changed_when: no
-  always_run: yes
+  check_mode: no
   register: ipv4_reverse_path_filter_all_int_audit
   ignore_errors: yes
   tags:
-      - medium
-      - cat2
-      - V-38542
-      - audit
-      - ipv4
-      - sysctl
-      - kernel_parameters
-      - network
+    - medium
+    - cat2
+    - V-38542
+    - audit
+    - ipv4
+    - sysctl
+    - kernel_parameters
+    - network
 
 - name: "MEDIUM | V-38542 | PATCH | The system must use a reverse-path filter for IPv4 network traffic when possible on all interfaces."
   sysctl:
-      name: net.ipv4.conf.all.rp_filter
-      value: 1
-      state: present
-      reload: yes
+    name: net.ipv4.conf.all.rp_filter
+    value: 1
+    state: present
+    reload: yes
   tags:
-      - medium
-      - cat2
-      - V-38542
-      - patch
-      - ipv4
-      - sysctl
-      - kernel_parameters
-      - network
+    - medium
+    - cat2
+    - V-38542
+    - patch
+    - ipv4
+    - sysctl
+    - kernel_parameters
+    - network
 
 - name: "MEDIUM | V-38544 | AUDIT | The system must use a reverse-path filter for IPv4 network traffic when possible by default."
   shell: sysctl net.ipv4.conf.default.rp_filter | awk '{print $3}'
   changed_when: no
-  always_run: yes
+  check_mode: no
   register: ipv4_reverse_path_filter_default_audit
   ignore_errors: yes
   tags:
-      - medium
-      - cat2
-      - V-38544
-      - audit
-      - ipv4
-      - sysctl
-      - kernel_parameters
-      - network
+    - medium
+    - cat2
+    - V-38544
+    - audit
+    - ipv4
+    - sysctl
+    - kernel_parameters
+    - network
 
 - name: "MEDIUM | V-38544 | PATCH | The system must use a reverse-path filter for IPv4 network traffic when possible by default."
   sysctl:
-      name: net.ipv4.conf.default.rp_filter
-      value: 1
-      state: present
-      reload: yes
+    name: net.ipv4.conf.default.rp_filter
+    value: 1
+    state: present
+    reload: yes
   tags:
-      - medium
-      - cat2
-      - V-38544
-      - patch
-      - ipv4
-      - sysctl
-      - kernel_parameters
-      - network
+    - medium
+    - cat2
+    - V-38544
+    - patch
+    - ipv4
+    - sysctl
+    - kernel_parameters
+    - network
 
 - name: "MEDIUM | V-38546 | AUDIT | The IPv6 protocol handler must not be bound to the network stack unless needed."
   shell: grep -rsE '^options\s*ipv6\s*disable=1' /etc/modprobe.conf /etc/modprobe.d | awk -F':' '{print $2}' | awk -F'=' '{print $2}'
   register: ipv6_protocol_handler_bound_network_stack_audit
   changed_when: no
-  always_run: yes
+  check_mode: no
   ignore_errors: yes
   tags:
-      - V-38546
-      - cat2
-      - medium
-      - ipv6
-      - network
-      - always
+    - V-38546
+    - cat2
+    - medium
+    - ipv6
+    - network
 
 - name: "MEDIUM | V-38546 | PATCH | The IPv6 protocol handler must not be bound to the network stack unless needed."
   lineinfile:
-        state: present
-        create: yes
-        line: options ipv6 disable=1
-        dest: /etc/modprobe.d/disable-ipv6.conf
+    state: present
+    create: yes
+    line: options ipv6 disable=1
+    dest: /etc/modprobe.d/disable-ipv6.conf
   when: ipv6_protocol_handler_bound_network_stack_audit.stdout != 1
   tags:
-      - V-38546
-      - cat2
-      - medium
-      - ipv6
-      - network
-      - audit
+    - V-38546
+    - cat2
+    - medium
+    - ipv6
+    - network
+    - audit
 
 - name: "MEDIUM | V-38548 | AUDIT | The system must ignore ICMPv6 redirects by default."
   shell: sysctl net.ipv6.conf.default.accept_redirects | awk '{print $3}'
   changed_when: no
-  always_run: yes
+  check_mode: no
   register: icmpv6_ignore_redirects_default_audit
   ignore_errors: yes
   tags:
-      - medium
-      - cat2
-      - V-38548
-      - audit
-      - ICMPv4
-      - sysctl
-      - kernel_parameters
-      - network
+    - medium
+    - cat2
+    - V-38548
+    - audit
+    - ICMPv4
+    - sysctl
+    - kernel_parameters
+    - network
 
 - name: "MEDIUM | V-38548 | PATCH | The system must ignore ICMPv6 redirects by default."
   sysctl:
-      name: net.ipv6.conf.default.accept_redirects
-      value: 0
-      state: present
-      reload: yes
+    name: net.ipv6.conf.default.accept_redirects
+    value: 0
+    state: present
+    reload: yes
   when: cent7stig_ipv6_in_use
   tags:
-      - medium
-      - cat2
-      - V-38548
-      - patch
-      - ICMPv4
-      - sysctl
-      - kernel_parameters
-      - network
+    - medium
+    - cat2
+    - V-38548
+    - patch
+    - ICMPv4
+    - sysctl
+    - kernel_parameters
+    - network
 
 - name: |
-         MEDIUM | V-38549 | AUDIT | The system must employ a local IPv6 firewall.
-         MEDIUM | V-38553 | PATCH | The operating system must prevent public IPv6 access into an organizations internal networks, except as appropriately mediated by managed interfaces employing boundary protection devices.
-  command: service ip6tables status
+     MEDIUM | V-38549 | AUDIT | The system must employ a local IPv6 firewall.
+     MEDIUM | V-38553 | PATCH | The operating system must prevent public IPv6 access into an organizations internal networks, except as appropriately mediated by managed interfaces employing boundary protection devices.
+  command: systemctl status ip6tables
   when: cent7stig_ipv6_in_use
   changed_when: no
-  always_run: yes
+  check_mode: no
   register: ip6tables_audit
   ignore_errors: yes
   tags:
-      - cat2
-      - medium
-      - iptables
-      - ip6tables
-      - V-38549
-      - V-38553
-      - audit
+    - cat2
+    - medium
+    - iptables
+    - ip6tables
+    - V-38549
+    - V-38553
+    - audit
 
 - name: |
-         MEDIUM | V-38549 | PATCH | The system must employ a local IPv6 firewall.
-         MEDIUM | V-38553 | PATCH | The operating system must prevent public IPv6 access into an organizations internal networks, except as appropriately mediated by managed interfaces employing boundary protection devices.
+     MEDIUM | V-38549 | PATCH | The system must employ a local IPv6 firewall.
+     MEDIUM | V-38553 | PATCH | The operating system must prevent public IPv6 access into an organizations internal networks, except as appropriately mediated by managed interfaces employing boundary protection devices.
   service:
-      name: ip6tables
-      state: started
-      enabled: yes
+    name: ip6tables
+    state: started
+    enabled: yes
   when: cent7stig_ipv6_in_use
   tags:
-      - cat2
-      - medium
-      - iptables
-      - ip6tables
-      - V-38549
-      - V-38553
-      - patch
+    - cat2
+    - medium
+    - iptables
+    - ip6tables
+    - V-38549
+    - V-38553
+    - patch
 
-- name: | 
-         MEDIUM | V-38555 | AUDIT | The system must employ a local IPv4 firewall.
-         MEDIUM | V-38560 | AUDIT | The operating system must connect to external networks or information systems only through managed IPv4 interfaces consisting of boundary protection devices arranged in accordance with an organizational security architecture.
-  command: service iptables status
+- name: |
+     MEDIUM | V-38555 | AUDIT | The system must employ a local IPv4 firewall.
+     MEDIUM | V-38560 | AUDIT | The operating system must connect to external networks or information systems only through managed IPv4 interfaces consisting of boundary protection devices arranged in accordance with an organizational security architecture.
+  command: systemctl status iptables
   changed_when: no
-  always_run: yes
+  check_mode: no
   register: iptables_audit
   ignore_errors: yes
   tags:
-      - cat2
-      - medium
-      - iptables
-      - V-38555
-      - V-38560
-      - audit
+    - cat2
+    - medium
+    - iptables
+    - V-38555
+    - V-38560
+    - audit
 
-- name: | 
-         MEDIUM | V-38555 | PATCH | The system must employ a local IPv4 firewall.
-         MEDIUM | V-38560 | PATCH | The operating system must connect to external networks or information systems only through managed IPv4 interfaces consisting of boundary protection devices arranged in accordance with an organizational security architecture.
+- name: |
+     MEDIUM | V-38555 | PATCH | The system must employ a local IPv4 firewall.
+     MEDIUM | V-38560 | PATCH | The operating system must connect to external networks or information systems only through managed IPv4 interfaces consisting of boundary protection devices arranged in accordance with an organizational security architecture.
   service:
-      name: iptables
-      state: started
-      enabled: yes
+    name: iptables
+    state: started
+    enabled: yes
   tags:
-      - cat2
-      - medium
-      - iptables
-      - V-38555
-      - V-38560
-      - patch
+    - cat2
+    - medium
+    - iptables
+    - V-38555
+    - V-38560
+    - patch
 
 - name: "MEDIUM | V-38573 | AUDIT | The system must disable accounts after three consecutive unsuccessful logon attempts."
   shell: grep -h pam_faillock /etc/pam.d/system-auth /etc/pam.d/password-auth | grep deny=3
   changed_when: no
-  always_run: yes
+  check_mode: no
   register: logon_attempts_audit
   ignore_errors: yes
   tags:
-      - medium
-      - cat2
-      - V-38573
-      - logon_settings
-      - accounts
-      - audit
-      - pam
+    - medium
+    - cat2
+    - V-38573
+    - logon_settings
+    - accounts
+    - audit
+    - pam
 
 - name: "MEDIUM | V-38573 | PATCH | The system must disable accounts after three consecutive unsuccessful logon attempts."
-  pamd:
-      name: "{{ item }}"
-      new_type: auth
-      new_control: required
-      new_module_path: pam_faillock.so
-      type: auth
-      control: sufficient
-      module_path: pam_unix.so
-      module_arguments: preauth silent deny=3 unlock_time=604800 fail_interval=900
-      state: before
+  pam:
+    service: "{{ item }}"
+    type: auth
+    control: required
+    pam_module: pam_faillock.so
+    arguments: preauth silent deny=3 unlock_time=604800 fail_interval=900
+    before_line: auth sufficient pam_unix.so
+    state: present
   with_items:
-      - system-auth
-      - password-auth
+    - system-auth
+    - password-auth
   tags:
-      - medium
-      - cat2
-      - V-38573
-      - logon_settings
-      - accounts
-      - patch
-      - pam
+    - medium
+    - cat2
+    - V-38573
+    - logon_settings
+    - accounts
+    - patch
+    - pam
 
 - name: "MEDIUM | V-38573 | PATCH | The system must disable accounts after three consecutive unsuccessful logon attempts."
-  pamd:
-      name: "{{ item }}"
-      new_type: auth
-      new_control: '[default=die]' 
-      new_module_path: pam_faillock.so
-      type: auth
-      control: sufficient
-      module_path: pam_unix.so
-      module_arguments: authfail deny=3 unlock_time=604800 fail_interval=900 
-      state: after 
+  pam:
+    service: "{{ item }}"
+    type: auth
+    control: '[default=die]'
+    pam_module: pam_faillock.so
+    arguments: authfail deny=3 unlock_time=604800 fail_interval=900
+    after_line: auth sufficient pam_unix.so
+    state: present
   with_items:
-      - system-auth
-      - password-auth
+    - system-auth
+    - password-auth
   tags:
-      - medium
-      - cat2
-      - V-38573
-      - logon_settings
-      - accounts
-      - patch
-      - pam
+    - medium
+    - cat2
+    - V-38573
+    - logon_settings
+    - accounts
+    - patch
+    - pam
 
 - name: "MEDIUM | V-38573 | PATCH | The system must disable accounts after three consecutive unsuccessful logon attempts."
-  pamd:
-      name: "{{ item }}"
-      new_type: account
-      new_control: required 
-      new_module_path: pam_faillock.so
-      type: account
-      control: required
-      module_path: pam_unix.so
-      state: before
+  pam:
+    service: "{{ item }}"
+    type: account
+    control: required
+    pam_module: pam_faillock.so
+    before_line: account required pam_unix.so
+    state: present
   with_items:
-      - system-auth
-      - password-auth
+    - system-auth
+    - password-auth
   tags:
-      - medium
-      - cat2
-      - V-38573
-      - logon_settings
-      - accounts
-      - patch
-      - pam
+    - medium
+    - cat2
+    - V-38573
+    - logon_settings
+    - accounts
+    - patch
+    - pam
 
 - name: "MEDIUM | V-38574 | AUDIT | The system must use a FIPS 140-2 approved cryptographic hashing algorithm for generating account password hashes (system-auth)."
-  shell: find /etc/pam.d/ -type f -not -name '*.*' 
+  shell: find /etc/pam.d/ -type f -not -name '*.*'
   changed_when: no
   register: pamd_files
   ignore_errors: yes
   tags:
-      - medium
-      - cat2
-      - V-38574
-      - logon_settings
-      - accounts
-      - passwords
-      - always
-      - pam
+    - medium
+    - cat2
+    - V-38574
+    - logon_settings
+    - accounts
+    - passwords
+    - pam
 
 - name: "MEDIUM | V-38574 | AUDIT | The system must use a FIPS 140-2 approved cryptographic hashing algorithm for generating account password hashes (system-auth)."
   shell: grep password -h /etc/pam.d/* | grep pam_unix.so | awk '{print $4}'
   changed_when: no
-  always_run: yes
+  check_mode: no
   register: pam_pwd_hash_audit
   ignore_errors: yes
   tags:
-      - medium
-      - cat2
-      - V-38574
-      - logon_settings
-      - accounts
-      - passwords
-      - always
+    - medium
+    - cat2
+    - V-38574
+    - logon_settings
+    - accounts
+    - passwords
 
 - name: "MEDIUM | V-38574 | PATCH | The system must use a FIPS 140-2 approved cryptographic hashing algorithm for generating account password hashes (system-auth)."
   # The PAM module doesn't make sense for this particular rule. Lineinfile works perfectly here.
   lineinfile:
-      dest: "{{ item }}"
-      backrefs: yes
-      regexp: (^password\s*.*pam_unix.so.*)(md5|sha256|blowfish|bigcrypt)(.*) 
-      line: \1sha512\3
-      backup: yes
-  with_items: "{{ pamd_files.stdout_lines }}"
+    dest: "{{ item }}"
+    backrefs: yes
+    regexp: (^password\s*.*pam_unix.so.*)(md5|sha256|blowfish|bigcrypt)(.*)
+    line: \1sha512\3
+    backup: yes
+  with_items: "{{pamd_files.stdout_lines}}"
   tags:
-      - medium
-      - cat2
-      - V-38574
-      - logon_settings
-      - accounts
-      - passwords
-      - patch
-      - pam
+    - medium
+    - cat2
+    - V-38574
+    - logon_settings
+    - accounts
+    - passwords
+    - patch
+    - pam
 
 - name: "MEDIUM | V-38576 | AUDIT | The system must use a FIPS 140-2 approved cryptographic hashing algorithm for generating account password hashes (login.defs)"
   shell: grep ENCRYPT_METHOD /etc/login.defs | awk '{print $2}'
-  always_run: yes
+  check_mode: no
   changed_when: no
   register: login_defs_audit
   ignore_errors: yes
   tags:
-      - audit
-      - medium
-      - cat2
-      - V-38576
-      - passwords
+    - audit
+    - medium
+    - cat2
+    - V-38576
+    - passwords
 
 - name: "MEDIUM | V-38576 | PATCH | The system must use a FIPS 140-2 approved cryptographic hashing algorithm for generating account password hashes (login.defs)"
-  lineinfile: 
-      state: present
-      backup: yes 
-      dest: /etc/login.defs 
-      regexp: '^ENCRYPT_METHOD' 
-      line: 'ENCRYPT_METHOD SHA512'
+  lineinfile:
+    state: present
+    backup: yes
+    dest: /etc/login.defs
+    regexp: '^ENCRYPT_METHOD'
+    line: 'ENCRYPT_METHOD SHA512'
   tags:
-      - cat2
-      - medium
-      - patch
-      - V-38576
-      - passwords
+    - cat2
+    - medium
+    - patch
+    - V-38576
+    - passwords
 
 - name: "MEDIUM | V-38577 | AUDIT | The system must use a FIPS 140-2 approved cryptographic hashing algorithm for generating account password hashes (libuser.conf)"
   shell: grep crypt_style /etc/libuser.conf | awk '{print $3}'
-  always_run: yes
+  check_mode: no
   changed_when: no
   register: libuser_audit
   ignore_errors: yes
   tags:
-      - cat2
-      - medium
-      - audit
-      - V-38577
-      - passwords
+    - cat2
+    - medium
+    - audit
+    - V-38577
+    - passwords
 
 - name: "MEDIUM | V-38577 | PATCH | The system must use a FIPS 140-2 approved cryptographic hashing algorithm for generating account password hashes (libuser.conf)"
   ini_file:
-      state: present 
-      backup: yes 
-      dest: /etc/libuser.conf 
-      section: defaults
-      option: crypt_style
-      value: sha512 
+    state: present
+    backup: yes
+    dest: /etc/libuser.conf
+    section: defaults
+    option: crypt_style
+    value: sha512
   tags:
-      - cat2
-      - medium
-      - audit
-      - V-38577
-      - passwords
+    - cat2
+    - medium
+    - audit
+    - V-38577
+    - passwords
 
 - name: |
-         MEDIUM | V-38579 | AUDIT | The system boot loader configuration file(s) must be owned by root.
-         MEDIUM | V-38581 | AUDIT | The system boot loader configuration file(s) must be group-owned by root.
-         MEDIUM | V-38583 | AUDIT | The system boot loader configuration file(s) must have mode 0600 or less permissive.
-  stat: 
-      path: /boot/grub2/grub.cfg
+     MEDIUM | V-38579 | AUDIT | The system boot loader configuration file(s) must be owned by root.
+     MEDIUM | V-38581 | AUDIT | The system boot loader configuration file(s) must be group-owned by root.
+     MEDIUM | V-38583 | AUDIT | The system boot loader configuration file(s) must have mode 0600 or less permissive.
+  stat:
+    path: /boot/grub2/grub.cfg
   register: grub_conf_audit
-  always_run: yes
+  check_mode: no
   ignore_errors: yes
   tags:
-      - cat2
-      - medium
-      - V-38579
-      - V-38581
-      - V-38583
-      - file_perms
-      - grub
-      - audit  
+    - cat2
+    - medium
+    - V-38579
+    - V-38581
+    - V-38583
+    - file_perms
+    - grub
+    - audit
 
 - name: "MEDIUM | V-38579 | PATCH | The system boot loader configuration file(s) must be owned by root."
-  file: 
-      dest: /boot/grub2/grub.cfg
-      owner: root
-      state: file
-      follow: yes
+  file:
+    dest: /boot/grub2/grub.cfg
+    owner: root
+    state: file
+    follow: yes
   tags:
-      - cat2
-      - medium
-      - V-38579
-      - file_perms
-      - grub
-      - patch 
+    - cat2
+    - medium
+    - V-38579
+    - file_perms
+    - grub
+    - patch
 
 - name: "MEDIUM | V-38580 | AUDIT | The audit system must be configured to audit the loading and unloading of dynamic kernel modules."
   shell: egrep -e "(-w |-F path=)/sbin/insmod" /etc/audit/audit.rules; egrep -e "(-w |-F path=)/sbin/modprobe" /etc/audit/audit.rules; egrep -e "(-w |-F path=)/sbin/rmmod" /etc/audit/audit.rules;grep -w "init_module" /etc/audit/audit.rules; grep -w "init_module" /etc/audit/audit.rules
-  always_run: yes
+  check_mode: no
   changed_when: false
   register: dynamic_kernel_loading_audit
   ignore_errors: yes
@@ -1780,613 +1760,610 @@
 
 - name: "MEDIUM | V-38580 | PATCH | The audit system must be configured to audit the loading and unloading of dynamic kernel modules."
   lineinfile:
-      backup: yes
-      line: "{{ item }}"
-      dest: /etc/audit/audit.rules
-      state: present 
+    backup: yes
+    line: "{{ item }}"
+    dest: /etc/audit/audit.rules
+    state: present
   with_items:
-      - -w /sbin/insmod -p x -k modules
-      - -w /sbin/rmmod -p x -k modules
-      - -w /sbin/modprobe -p x -k modules
-      - -a always,exit -F arch=b{{ansible_architecture | regex_replace('.*_(\\d*)','\\\\1')}} -S init_module -S delete_module -k modules
+    - -w /sbin/insmod -p x -k modules
+    - -w /sbin/rmmod -p x -k modules
+    - -w /sbin/modprobe -p x -k modules
+    - -a always,exit -F arch=b{{ansible_architecture | regex_replace('.*_(\\d*)','\\\\1')}} -S init_module -S delete_module -k modules
   tags:
     - cat2
     - medium
-    - patch 
+    - patch
     - kernel
     - auditd
     - V-38580
 
 - name: "MEDIUM | V-38581 | PATCH | The system boot loader configuration file(s) must be group-owned by root"
-  file: 
-      path: /boot/grub2/grub.cfg
-      group: root
-      follow: yes
+  file:
+    path: /boot/grub2/grub.cfg
+    group: root
+    follow: yes
   tags:
-      - cat2
-      - V-38583
-      - file_perms
-      - medium
-      - patch
-      - grub
+    - cat2
+    - V-38583
+    - file_perms
+    - medium
+    - patch
+    - grub
 
 # If any xinted service is found to be on, skip these tasks since xinetd can be on if a service is using it
 - name: "MEDIUM | V-38582 | AUDIT | The xinetd service must be disabled if no network services utilizing it are enabled"
   shell: "systemctl status xinetd"
   changed_when: no
-  always_run: yes
+  check_mode: no
   register: xinetd_services
   failed_when: xinetd_services.stderr
   ignore_errors: yes
   tags:
-      - cat2
-      - V-38582
-      - medium 
-      - xinetd
-      - services
-      - always
+    - cat2
+    - V-38582
+    - medium
+    - xinetd
+    - services
 
-- name: "MEDIUM | V-38582 | PATCH | The xinetd service must be disabled if no network services utilizing it are enabled" 
-  service: 
-      name: xinetd 
-      enabled: no 
-      state: stopped
+- name: "MEDIUM | V-38582 | PATCH | The xinetd service must be disabled if no network services utilizing it are enabled"
+  service:
+    name: xinetd
+    enabled: no
+    state: stopped
   when: xinetd_services.stdout and '(running)' not in xinetd_services.stdout
-  tags: 
-      - cat2
-      - medium 
-      - V-38582
-      - xinetd
-      - services
-      - patch
-
-- name: "MEDIUM | V-38583| PATCH | The system boot loader configuration file(s) must have mode 0600 or less permissive." 
-  file: 
-      path: /boot/grub2/grub.cfg
-      mode: u-x,go-rwx 
-      follow: yes
   tags:
-      - cat2
-      - V-38583
-      - file_perms
-      - medium
-      - patch
-      - grub
+    - cat2
+    - medium
+    - V-38582
+    - xinetd
+    - services
+    - patch
+
+- name: "MEDIUM | V-38583| PATCH | The system boot loader configuration file(s) must have mode 0600 or less permissive."
+  file:
+    path: /boot/grub2/grub.cfg
+    mode: u-x,go-rwx
+    follow: yes
+  tags:
+    - cat2
+    - V-38583
+    - file_perms
+    - medium
+    - patch
+    - grub
 
 - name: "MEDIUM | V-38585 | AUDIT | The system boot loader must require authentication."
   shell: 'grep password /boot/grub2/grub.cfg | grep -v encrypted'
-  always_run: yes
+  check_mode: no
   changed_when: no
   register: grub_auth_audit
   failed_when: grub_auth_audit.stdout_lines|length > 0
   ignore_errors: yes
   tags:
-      - cat2
-      - medium
-      - V-38585
-      - grub
-      - passwords
-      - always
+    - cat2
+    - medium
+    - V-38585
+    - grub
+    - passwords
 
 - name: "MEDIUM | V-38585 | PATCH | The system boot loader must require authentication."
   grub_crypt:
-      password: "{{ cent7stig_bootloader_password }}"
+    password: "{{ cent7stig_bootloader_password }}"
   register: grub_pass
   when: grub_auth_audit.failed == true
   tags:
-      - cat2
-      - medium
-      - V-38585
-      - grub
-      - passwords
-      - patch 
+    - cat2
+    - medium
+    - V-38585
+    - grub
+    - passwords
+    - patch
 
 - name: "MEDIUM | V-38585 | PATCH | The system boot loader must require authentication."
   lineinfile:
-      state: present
-      line: password --encrypted {{ grub_pass.passhash }} 
-      dest: /boot/grub2/grub.cfg
-      follow: yes
-      insertafter: '^#\\s'
-      regexp: password
+    state: present
+    line: password --encrypted {{ grub_pass.passhash }}
+    dest: /boot/grub2/grub.cfg
+    follow: yes
+    insertafter: '^#\\s'
+    regexp: password
   when: grub_auth_audit.failed == true
   tags:
-      - cat2
-      - medium
-      - V-38585
-      - grub
-      - passwords
-      - patch 
+    - cat2
+    - medium
+    - V-38585
+    - grub
+    - passwords
+    - patch
 
 - name: "MEDIUM | V-38586 | AUDIT | The system must require authentication upon booting into single-user and maintenance modes."
   command: grep SINGLE /etc/sysconfig/init
   changed_when: no
-  always_run: yes
+  check_mode: no
   register: single_user_mode_auth_audit
   ignore_errors: yes
   tags:
-      - cat2
-      - medium
-      - V-38585
-      - root_access 
-      - audit
+    - cat2
+    - medium
+    - V-38585
+    - root_access
+    - audit
 
 - name: "MEDIUM | V-38586 | PATCH | The system must require authentication upon booting into single-user and maintenance modes."
-  lineinfile: 
-      state: present 
-      backup: yes 
-      dest: /etc/sysconfig/init 
-      regexp: '^(#)?SINGLE' 
-      line: 'SINGLE=/sbin/sulogin'
+  lineinfile:
+    state: present
+    backup: yes
+    dest: /etc/sysconfig/init
+    regexp: '^(#)?SINGLE'
+    line: 'SINGLE=/sbin/sulogin'
   tags:
-      - cat2
-      - medium
-      - V-38585
-      - root_access 
-      - patch 
+    - cat2
+    - medium
+    - V-38585
+    - root_access
+    - patch
 
 - name: "MEDIUM | V-38588 | AUDIT | The system must not permit interactive boot."
   command: grep PROMPT /etc/sysconfig/init
-  always_run: yes
+  check_mode: no
   changed_when: no
   register: interactive_boot_audit
   ignore_errors: yes
   tags:
-      - cat2
-      - medium
-      - V-38588
-      - interactive_boot
-      - audit
+    - cat2
+    - medium
+    - V-38588
+    - interactive_boot
+    - audit
 
 - name: "MEDIUM | V-38588 | PATCH | The system must not permit interactive boot."
   lineinfile:
-      state: present 
-      backup: yes 
-      dest: /etc/sysconfig/init 
-      regexp: '^PROMPT=' 
-      line: 'PROMPT=no'
+    state: present
+    backup: yes
+    dest: /etc/sysconfig/init
+    regexp: '^PROMPT='
+    line: 'PROMPT=no'
   tags:
-      - cat2
-      - medium
-      - V-38588
-      - interactive_boot
-      - patch
+    - cat2
+    - medium
+    - V-38588
+    - interactive_boot
+    - patch
 
-- name: "MEDIUM | V-38592 | AUDIT | The system must require administrator action to unlock an account locked by excessive failed login attempts." 
+- name: "MEDIUM | V-38592 | AUDIT | The system must require administrator action to unlock an account locked by excessive failed login attempts."
   shell: grep -h pam_faillock /etc/pam.d/system-auth /etc/pam.d/password-auth | grep unlock_time
   changed_when: no
-  always_run: yes
+  check_mode: no
   register: admin_unlock_audit
   ignore_errors: yes
   tags:
-      - medium
-      - cat2
-      - V-38592
-      - logon_settings
-      - accounts
-      - audit
-      - pam
+    - medium
+    - cat2
+    - V-38592
+    - logon_settings
+    - accounts
+    - audit
+    - pam
 
-- name: "MEDIUM | V-38592 | PATCH | The system must require administrator action to unlock an account locked by excessive failed login attempts." 
-  pamd:
-      name: "{{ item }}"
-      new_type: auth
-      new_control: required
-      new_module_path: pam_faillock.so
-      type: auth
-      module_path: pam_unix.so
-      control: sufficient
-      module_arguments: preauth silent deny=3 unlock_time=604800 fail_interval=900
-      state: before
+- name: "MEDIUM | V-38592 | PATCH | The system must require administrator action to unlock an account locked by excessive failed login attempts."
+  pam:
+    service: "{{ item }}"
+    type: auth
+    control: required
+    pam_module: pam_faillock.so
+    arguments: preauth silent deny=3 unlock_time=604800 fail_interval=900
+    before_line: auth sufficient pam_unix.so
+    state: present
   with_items:
-      - system-auth
-      - password-auth
+    - system-auth
+    - password-auth
   tags:
-      - medium
-      - cat2
-      - V-38573
-      - logon_settings
-      - accounts
-      - patch
-      - pam
+    - medium
+    - cat2
+    - V-38573
+    - logon_settings
+    - accounts
+    - patch
+    - pam
 
-- name: "MEDIUM | V-38592 | PATCH | The system must require administrator action to unlock an account locked by excessive failed login attempts." 
-  pamd:
-      name: "{{ item }}"
-      new_type: auth
-      new_control: '[default=die]' 
-      new_module_path: pam_faillock.so
-      module_arguments: authfail deny=3 unlock_time=604800 fail_interval=900 
-      type: auth
-      control: sufficient
-      module_path: pam_unix.so
-      state: after 
+- name: "MEDIUM | V-38592 | PATCH | The system must require administrator action to unlock an account locked by excessive failed login attempts."
+  pam:
+    service: "{{ item }}"
+    type: auth
+    control: '[default=die]'
+    pam_module: pam_faillock.so
+    arguments: authfail deny=3 unlock_time=604800 fail_interval=900
+    after_line: auth sufficient pam_unix.so
+    state: present
   with_items:
-      - system-auth
-      - password-auth
+    - system-auth
+    - password-auth
   tags:
-      - medium
-      - cat2
-      - V-38573
-      - logon_settings
-      - accounts
-      - patch
-      - pam
+    - medium
+    - cat2
+    - V-38573
+    - logon_settings
+    - accounts
+    - patch
+    - pam
 
-- name: "MEDIUM | V-38592 | PATCH | The system must require administrator action to unlock an account locked by excessive failed login attempts." 
-  pamd:
-      name: "{{ item }}"
-      new_type: account
-      new_control: required 
-      new_module_path: pam_faillock.so
-      type: account
-      control: required
-      module_path: pam_unix.so
-      state: before
+- name: "MEDIUM | V-38592 | PATCH | The system must require administrator action to unlock an account locked by excessive failed login attempts."
+  pam:
+    service: "{{ item }}"
+    type: account
+    control: required
+    pam_module: pam_faillock.so
+    before_line: account required pam_unix.so
+    state: present
   with_items:
-      - system-auth
-      - password-auth
+    - system-auth
+    - password-auth
   tags:
-      - medium
-      - cat2
-      - V-38573
-      - logon_settings
-      - accounts
-      - patch
-      - pam
+    - medium
+    - cat2
+    - V-38573
+    - logon_settings
+    - accounts
+    - patch
+    - pam
 
 - name: "MEDIUM | V-38593 | AUDIT |  The Department of Defense (DoD) login banner must be displayed immediately prior to or as part of console login prompts"
   command: cat /etc/issue
   changed_when: no
-  always_run: yes
+  check_mode: no
   register: login_banner_audit
   ignore_errors: yes
-  tags: 
-      - cat2
-      - medium
-      - V-38593
-      - logon_settings
-      - dod_logon_banner
-      - audit 
+  tags:
+    - cat2
+    - medium
+    - V-38593
+    - logon_settings
+    - dod_logon_banner
+    - audit
 
 - name: "MEDIUM | V-38593 | PATCH |  The Department of Defense (DoD) login banner must be displayed immediately prior to or as part of console login prompts"
-  copy: 
-      src: issue 
-      dest: /etc/{{ item }} 
-      owner: root 
-      group: root 
-      mode: "0644" 
-      backup: yes
+  copy:
+    src: issue
+    dest: /etc/{{ item }}
+    owner: root
+    group: root
+    mode: "0644"
+    backup: yes
   with_items:
     - issue
     - issue.net
-  tags: 
-      - cat2
-      - medium
-      - V-38593
-      - logon_settings
-      - dod_logon_banner
-      - patch
+  tags:
+    - cat2
+    - medium
+    - V-38593
+    - logon_settings
+    - dod_logon_banner
+    - patch
 
-# Not automated:  V-38595 | The system must be configured to require the use of a CAC, PIV compliant hardware token, or Alternate Logon Token (ALT) for authentication. 
+# Not automated:  V-38595 | The system must be configured to require the use of a CAC, PIV compliant hardware token, or Alternate Logon Token (ALT) for authentication.
 
 - name: "MEDIUM | V-38596 | AUDIT | The system must implement virtual address space randomization."
   shell: sysctl kernel.randomize_va_space | awk '{print $3}'
   changed_when: no
-  always_run: yes
+  check_mode: no
   register: virt_addr_space_randomization_audit
   ignore_errors: yes
-  tags: 
-      - cat2
-      - audit
-      - medium
-      - sysctl
-      - kernel
-      - V-38596
+  tags:
+    - cat2
+    - audit
+    - medium
+    - sysctl
+    - kernel
+    - V-38596
 
 - name: "MEDIUM | V-38596 | PATCH | The system must implement virtual address space randomization."
   sysctl:
-      name: kernel.randomize_va_space
-      value: 2
-      state: present
-      reload: yes
+    name: kernel.randomize_va_space
+    value: 2
+    state: present
+    reload: yes
   tags:
-      - cat2
-      - patch
-      - medium
-      - sysctl
-      - kernel
-      - V-38596
+    - cat2
+    - patch
+    - medium
+    - sysctl
+    - kernel
+    - V-38596
 
 - name: "MEDIUM | V-38597 | AUDIT | The system must limit the ability of processes to have simultaneous write and execute access to memory."
   shell: sysctl kernel.exec-shield | awk '{print $3}'
   changed_when: no
-  always_run: yes
+  check_mode: no
   register: simultaneous_wr_memory_audit
   ignore_errors: yes
   tags:
-      - cat2
-      - audit
-      - medium
-      - sysctl
-      - kernel
-      - V-38597
+    - cat2
+    - audit
+    - medium
+    - sysctl
+    - kernel
+    - V-38597
 
 - name: "MEDIUM | V-38597 | PATCH | The system must limit the ability of processes to have simultaneous write and execute access to memory."
   sysctl:
-      name: kernel.exec-shield
-      value: 1
-      state: present
-      reload: yes
+    name: kernel.exec-shield
+    value: 1
+    state: present
+    reload: yes
   #dsmorse:  from what I can tell RHEL & Cent 7 do not allow you configure exec-shield, I expect this to change in the final STIG
   when: "(ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat') and ansible_distribution_major_version < 7"
   tags:
-      - cat2
-      - patch 
-      - medium
-      - sysctl
-      - kernel
-      - V-38597
+    - cat2
+    - patch
+    - medium
+    - sysctl
+    - kernel
+    - V-38597
 
 - name: "MEDIUM | V-38599 | AUDIT | The FTPS/FTP service on the system must be configured with the Department of Defense (DoD) login banner"
   shell: grep banner_file /etc/vsftpd/vsftpd.conf | cut -f2- -d'=' | xargs cat
   changed_when: no
-  always_run: yes
+  check_mode: no
   register: vsftpd_banner_audit
   ignore_errors: yes
   when: vsftpd_services.stdout_lines|length > 0
   tags:
-      - cat2
-      - medium 
-      - V-38599
-      - vsftp
-      - dod_logon_banner
-      - logon_settings
-      - audit 
+    - cat2
+    - medium
+    - V-38599
+    - vsftp
+    - dod_logon_banner
+    - logon_settings
+    - audit
 
 - name: "MEDIUM | V-38599 | PATCH | The FTPS/FTP service on the system must be configured with the Department of Defense (DoD) login banner"
-  lineinfile: 
-      state: present 
-      backup: yes 
-      dest: /etc/vsftpd/vsftpd.conf 
-      regexp: '^#?banner_file' 
-      line: 'banner_file=/etc/issue'
+  lineinfile:
+    state: present
+    backup: yes
+    dest: /etc/vsftpd/vsftpd.conf
+    regexp: '^#?banner_file'
+    line: 'banner_file=/etc/issue'
   when: vsftpd_services.stdout_lines|length > 0
   notify: restart vsftpd
-  tags: 
-      - cat2
-      - medium 
-      - V-38599
-      - vsftp
-      - dod_logon_banner
-      - logon_settings
-      - patch
+  tags:
+    - cat2
+    - medium
+    - V-38599
+    - vsftp
+    - dod_logon_banner
+    - logon_settings
+    - patch
 
 
 - name: "MEDIUM | V-38600 | AUDIT | The system must not send ICMPv4 redirects by default."
   shell: sysctl net.ipv4.conf.default.send_redirects | awk '{print $3}'
   changed_when: no
-  always_run: yes
+  check_mode: no
   register: icmpv4_redirects_audit
   ignore_errors: yes
   tags:
-      - medium
-      - cat2
-      - V-38600
-      - icmp
-      - sysctl
-      - audit
+    - medium
+    - cat2
+    - V-38600
+    - icmp
+    - sysctl
+    - audit
 
 - name: "MEDIUM | V-38600 | PATCH | The system must not send ICMPv4 redirects by default."
   sysctl:
-      name: net.ipv4.conf.default.send_redirects
-      value: 0
-      reload: yes
+    name: net.ipv4.conf.default.send_redirects
+    value: 0
+    reload: yes
   tags:
-      - medium
-      - cat2
-      - V-38600
-      - icmp
-      - sysctl
-      - patch 
+    - medium
+    - cat2
+    - V-38600
+    - icmp
+    - sysctl
+    - patch
 
 - name: "MEDIUM | V-38601 | AUDIT | The system must not send ICMPv4 redirects from any interface."
   shell: sysctl net.ipv4.conf.all.send_redirects | awk '{print $3}'
   changed_when: no
-  always_run: yes
+  check_mode: no
   register: any_iface_icmp_redirect_audit
   ignore_errors: yes
   tags:
-      - medium
-      - cat2
-      - V-38601
-      - icmp
-      - sysctl
-      - audit 
+    - medium
+    - cat2
+    - V-38601
+    - icmp
+    - sysctl
+    - audit
 
 - name: "MEDIUM | V-38601 | PATCH | The system must not send ICMPv4 redirects from any interface."
   sysctl:
-      name: net.ipv4.conf.all.send_redirects
-      value: 0
-      reload: yes
+    name: net.ipv4.conf.all.send_redirects
+    value: 0
+    reload: yes
   tags:
-      - medium
-      - cat2
-      - V-38601
-      - icmp
-      - sysctl
-      - patch
+    - medium
+    - cat2
+    - V-38601
+    - icmp
+    - sysctl
+    - patch
 
 - name: "MEDIUM | V-38603 | AUDIT | The ypserv package must not be installed."
   command: rpm -q ypserv
-  always_run: yes
+  check_mode: no
   changed_when: no
   register: ypserv_audit
   ignore_errors: yes
   tags:
-      - medium
-      - V-38603
-      - audit
-      - cat2
-      - ypserv
-      - packages
+    - medium
+    - V-38603
+    - audit
+    - cat2
+    - ypserv
+    - packages
 
 - name: "MEDIUM | V-38603 | PATCH | The ypserv package must not be installed."
   yum:
-      name: ypserv
-      state: absent
+    name: ypserv
+    state: absent
   tags:
-      - medium
-      - V-38603
-      - patch 
-      - cat2
-      - ypserv
-      - packages
+    - medium
+    - V-38603
+    - patch
+    - cat2
+    - ypserv
+    - packages
 
 - name: "MEDIUM | V-38604 | AUDIT | The ypbind service must not be running."
   command: chkconfig "ypbind" --list
-  changed_when: no 
-  always_run: yes
+  changed_when: no
+  check_mode: no
   register: ypbind_service_audit
   failed_when: "'No such file or directory' not in ypbind_service_audit.stderr"
   ignore_errors: yes
   tags:
-      - medium
-      - V-38604
-      - audit
-      - cat2
-      - ypbind
-      - services
+    - medium
+    - V-38604
+    - audit
+    - cat2
+    - ypbind
+    - services
 
 - name: "MEDIUM | V-38604 | PATCH | The ypbind service must not be running."
+  #if the service is not installed it is by default not enabled so that is a pass
+  when: "'service ypbind: No such file' not in ypbind_service_audit.stderr"
   service:
-      name: ypbind
-      state: stopped
-      enabled: no
-  ignore_errors: yes
+    name: ypbind
+    state: stopped
+    enabled: no
   tags:
-      - medium
-      - V-38604
-      - patch
-      - cat2
-      - ypbind
-      - services
+    - medium
+    - V-38604
+    - patch
+    - cat2
+    - ypbind
+    - services
 
 - name: "MEDIUM | V-38605 | AUDIT | The cron service must be running"
-  command: service crond status
+  command: systemctl status crond
   changed_when: no
-  always_run: yes
+  check_mode: no
   ignore_errors: yes
   register: crond_status_audit
   tags:
-      - medium
-      - cat2
-      - cron
-      - audit
-      - V-38605
-      - services
+    - medium
+    - cat2
+    - cron
+    - audit
+    - V-38605
+    - services
 
 - name: "MEDIUM | V-38605 | PATCH | The cron service must be running"
   service:
-      name: crond
-      state: started
-      enabled: yes
+    name: crond
+    state: started
+    enabled: yes
   tags:
-      - medium
-      - cat2
-      - cron
-      - patch 
-      - V-38605
-      - services
+    - medium
+    - cat2
+    - cron
+    - patch
+    - V-38605
+    - services
 
 - name: "MEDIUM | V-38606 | AUDIT | The tftp-server package must not be installed unless required."
   command: rpm -q tftp-server
-  always_run: yes
+  check_mode: no
   changed_when: no
   register: tftp_server_install_audit
   when: not cent7stig_tftp_required
   ignore_errors: yes
   tags:
-      - medium
-      - cat2
-      - V-38606
-      - tftp
-      - packages
-      - audit
+    - medium
+    - cat2
+    - V-38606
+    - tftp
+    - packages
+    - audit
 
 - name: "MEDIUM | V-38606 | PATCH | The tftp-server packages must not be intalled unless required."
   yum:
-      name: tftp-server
-      state: absent
+    name: tftp-server
+    state: absent
   when: not cent7stig_tftp_required
   tags:
-      - medium
-      - cat2
-      - V-38606
-      - tftp
-      - packages
-      - patch
+    - medium
+    - cat2
+    - V-38606
+    - tftp
+    - packages
+    - patch
 
 - name: "MEDIUM | V-38609 | AUDIT | The TFTP service must not be running."
   command: chkconfig "tftp" --list
-  always_run: yes
+  check_mode: no
   changed_when: no
   ignore_errors: yes
+  register: tftp_service_audit
+  failed_when: "'No such file or directory' not in tftp_service_audit.stderr"
   tags:
-      - medium
-      - cat2
-      - V-38609
-      - audit
-      - tftp
-      - services
- 
+    - medium
+    - cat2
+    - V-38609
+    - audit
+    - tftp
+    - services
+
 - name: "MEDIUM | V-38609 | PATCH | The TFTP service must not be running."
+  #if the service is not installed it is by default not enabled so that is a pass
+  when: "'service tftp: No such file' not in tftp_service_audit.stderr"
   service:
-      name: tftp
-      state: stopped
-      enabled: no
-  ignore_errors: yes
+    name: tftp
+    state: stopped
+    enabled: no
   tags:
-      - medium
-      - cat2
-      - V-38609
-      - tftp
-      - services
-      - patch
+    - medium
+    - cat2
+    - V-38609
+    - tftp
+    - services
+    - patch
 
 - name: "MEDIUM | V-38611 | AUDIT | The SSH daemon must ignore .rhosts files."
   command: grep -i IgnoreRhosts /etc/ssh/sshd_config
-  always_run: yes
+  check_mode: no
   changed_when: no
   register: sshd_rhosts_ignore_audit
   ignore_errors: yes
   tags:
-      - medium
-      - cat2
-      - V-38611
-      - ssh
-      - rhosts
-      - sshd
-      - audit
+    - medium
+    - cat2
+    - V-38611
+    - ssh
+    - rhosts
+    - sshd
+    - audit
 
 - name: "MEDIUM | V-38611 | PATCH | The SSH daemon must ignore .rhosts files."
   lineinfile:
-      state: present
-      regexp: '^#?IgnoreRhosts'
-      line: IgnoreRhosts yes
-      dest: /etc/ssh/sshd_config
+    state: present
+    regexp: '^#?IgnoreRhosts'
+    line: IgnoreRhosts yes
+    dest: /etc/ssh/sshd_config
   tags:
-      - cat2
-      - medium
-      - V-38611
-      - rhosts
-      - sshd
-      - patch
+    - cat2
+    - medium
+    - V-38611
+    - rhosts
+    - sshd
+    - patch
 
 # Search for world writable files and print them out if any are found
 - name: "MEDIUM | V-38643 | PATCH | Looking for world-writable files on the system"
   command: find / -xdev -type f -perm -002
   register: world_writable_files
+  check_mode: no
   changed_when: false
   tags: [ 'cat2' , 'V-38643', 'file_perms' ]
 
@@ -2413,6 +2390,7 @@
 - name: "MEDIUM | V-38652 | PATCH | Checking for nfs mounts missing the 'nodev' option"
   shell: mount | grep 'type nfs' | grep -v 'nodev'
   changed_when: false
+  check_mode: no
   register: nfs_mounts_missing_nodev
   failed_when: nfs_mounts_missing_nodev.stderr
   tags: [ 'cat2' , 'V-38652' , 'nfs' ]
@@ -2432,13 +2410,14 @@
 - name: "MEDIUM | V-38652 | PATCH | Checking for nfs mounts missing the 'nosuid' option"
   shell: mount | grep 'type nfs' | grep -v 'nosuid'
   changed_when: false
+  check_mode: no
   failed_when: nfs_mounts_missing_nosuid.stderr
   register: nfs_mounts_missing_nosuid
   tags: [ 'cat2' , 'V-38652' , 'nfs' ]
 
 - name: "MEDIUM | V-38652 | PATCH | Remote file systems must be mounted with the nosuid option"
-  debug: var=nfs_mounts_missing_nosuid.stdout_lines
   when: nfs_mounts_missing_nosuid.stdout
+  debug: var=nfs_mounts_missing_nosuid.stdout_lines
   tags: [ 'cat2' , 'V-38652' , 'nfs' ]
 
 - name: "MEDIUM | V-38652 | PATCH | Remote file systems must be mounted with the nosuid option"
@@ -2447,7 +2426,7 @@
   tags: [ 'cat2' , 'V-38652' , 'nfs' ]
 
 - name: "MEDIUM | V-38664 | PATCH | The system package management tool must verify ownership on all files and directories associated with the audit package
-         MEDIUM | V-38665 | PATCH | The system package management tool must verify group-ownership on all files and directories associated with the audit package"
+     MEDIUM | V-38665 | PATCH | The system package management tool must verify group-ownership on all files and directories associated with the audit package"
   shell: "rpm -V audit | grep '^.....\\(U\\.\\|\\.G\\|UG\\)'"
   register: audit_ownership
   changed_when: audit_ownership.stdout != ''
@@ -2466,7 +2445,7 @@
 # Look for prior versions of SNMP in use and disable them if found
 - name: "MEDIUM | | PATCH | Check for SNMP config"
   stat:
-      path: /etc/snmp/snmpd.conf
+    path: /etc/snmp/snmpd.conf
   register: snmpconf_test
 
 - name: "MEDIUM | V-38660 | PATCH | Checking SNMP versions in use"
@@ -2497,24 +2476,24 @@
 
 - name: "MEDIUM | V-38671 | PATCH | Ensure postfix is installed"
   yum:
-      name: postfix
-      state: present
+    name: postfix
+    state: present
   when: cent7stig_install_packages
   tags:
-      - cat2
-      - V-38671
-      - patch
+    - cat2
+    - V-38671
+    - patch
 
 - name: "MEDIUM | V-38671 | PATCH | The sendmail package must be removed"
   yum:
-      name: sendmail
-      state: absent
+    name: sendmail
+    state: absent
   tags:
-      - cat2
-      - V-38671
-      - patch
-      - sendmail
-      - unauthorized_packages
+    - cat2
+    - V-38671
+    - patch
+    - sendmail
+    - unauthorized_packages
 
 - name: "MEDIUM | V-38674 | PATCH |  X Windows must not be enabled unless required"
   lineinfile:
@@ -2536,6 +2515,7 @@
 # are named like 'ifcfg-eth0.2014-07-18@13:19~' and will match the glob.
 - name: "MEDIUM | V-38679 | AUDIT | List interface config files"
   shell: ls /etc/sysconfig/network-scripts/ifcfg-* | grep -v $(date +%Y)
+  check_mode: no
   changed_when: false
   register: interface_config_files
   tags:
@@ -2543,7 +2523,6 @@
     - V-38679
     - network
     - dhcp
-    - always
 
 - name: "MEDIUM | V-38679 | PATCH | The DHCP client must be disabled if not needed"
   lineinfile:
@@ -2552,7 +2531,7 @@
     regexp: '^BOOTPROTO='
     line: 'BOOTPROTO=\"none\"'
     backup: no
-  with_items: "{{ interface_config_files.stdout_lines }}"
+  with_items: "{{interface_config_files.stdout_lines}}"
   register: dhcp_change
   when: interface_config_files.stdout and not cent7stig_use_dhcp
   tags: [ 'cat2' , 'V-38679' , 'network' , 'dhcp' ]
@@ -2596,11 +2575,11 @@
   tags: [ 'cat2' , 'V-38682' , 'kernel_modules' , 'bluetooth' ]
 
 - name: "MEDIUM | | PATCH | V-38670 Medium   The operating system must detect unauthorized changes to software and information.\n
-         \tMEDIUM | | PATCH | V-38673 Medium  The operating system must ensure unauthorized, security-relevant configuration changes detected are tracked.\n
-         \tMEDIUM | | PATCH | V-38695 Medium  A file integrity tool must be used at least weekly to check for unauthorized file changes, particularly the addition of unauthorized system libraries or binaries, or for unauthorized modification to authorized system libraries or binaries\n
-         \tMEDIUM | | PATCH | V-38696 Medium  The operating system must employ automated mechanisms, per organization defined frequency, to detect the addition of unauthorized components/devices into the operating system\n
-         \tMEDIUM | | PATCH | V-38698 Medium  The operating system must employ automated mechanisms to detect the presence of unauthorized software on organizational information systems and notify designated organizational officials in accordance with the organization defined frequency\n
-         \tMEDIUM | | PATCH | V-38700  Medium  The operating system must provide a near real-time alert when any of the organization defined list of compromise or potential compromise indicators occurs"
+     \tMEDIUM | | PATCH | V-38673 Medium  The operating system must ensure unauthorized, security-relevant configuration changes detected are tracked.\n
+     \tMEDIUM | | PATCH | V-38695 Medium  A file integrity tool must be used at least weekly to check for unauthorized file changes, particularly the addition of unauthorized system libraries or binaries, or for unauthorized modification to authorized system libraries or binaries\n
+     \tMEDIUM | | PATCH | V-38696 Medium  The operating system must employ automated mechanisms, per organization defined frequency, to detect the addition of unauthorized components/devices into the operating system\n
+     \tMEDIUM | | PATCH | V-38698 Medium  The operating system must employ automated mechanisms to detect the presence of unauthorized software on organizational information systems and notify designated organizational officials in accordance with the organization defined frequency\n
+     \tMEDIUM | | PATCH | V-38700  Medium  The operating system must provide a near real-time alert when any of the organization defined list of compromise or potential compromise indicators occurs"
   cron: >
     name='Run AIDE integrity check weekly'
     minute={{ cent7stig_aide_cron["aide_minute"] | default('05') }}
@@ -2613,7 +2592,7 @@
 
 - name: "MEDIUM | V-38519 | PATCH | Check file state and type to avoid hard link failures"
   stat: path={{ item }}
-  with_items: "{{ rsyslog_logfiles.stdout_lines }}"
+  with_items: rsyslog_log_files.stdout_lines
   register: log_files_st
   tags: [ 'cat2' , 'V-38519' , 'V-38518' , 'V-38623' , 'file_perms' ]
 
@@ -2629,7 +2608,7 @@
   file:
     state: absent
     dest: ~{{ item }}/.netrc
-  with_items: "{{ users.stdout_lines }}"
+  with_items: "{{users.stdout_lines}}"
   tags: [ 'cat2' , 'V-38619' , 'netrc' ]
 
 - name: "MEDIUM | V-38620 | PATCH | Installing NTP for V-38620 Medium/V-38621 Medium"
@@ -2672,8 +2651,8 @@
   tags: [ 'cat2' , 'V-38629' , 'gui' , 'screen_lock' ]
 
 - name: "MEDIUM | V-38628 | PATCH | The operating system must produce audit records containing sufficient information to establish the identity of any user/subject associated with the event
-        \tMEDIUM | V-38631 | PATCH | The operating system must employ automated mechanisms to facilitate the monitoring and control of remote access methods
-        \tMEDIUM | V-38632 | PATCH | The operating system must produce audit records containing sufficient information to establish what type of events occurred."
+    \tMEDIUM | V-38631 | PATCH | The operating system must employ automated mechanisms to facilitate the monitoring and control of remote access methods
+    \tMEDIUM | V-38632 | PATCH | The operating system must produce audit records containing sufficient information to establish what type of events occurred."
   service: name=auditd state=started enabled=yes
   tags: [ 'cat2' , 'V-38628' , 'V-38631' , 'V-38632' , 'auditd' ]
 
@@ -2685,6 +2664,7 @@
 - name: "MEDIUM | V-38637 | PATCH | Check for auditd files that have a different hash than rpm expects"
   shell: "rpm -V audit | awk '$1 ~ /..5/ && $2 != \"c\"'"
   changed_when: false
+  check_mode: no
   register: audit_integrity_check
   failed_when: audit_integrity_check.stderr
   tags: [ 'cat2' , 'V-38637' , 'auditd' , 'rpm' ]
@@ -2692,6 +2672,8 @@
 - name: "MEDIUM | V-38637 | PATCH | The system package management tool must verify contents of all files associated with the audit package"
   command: yum -y reinstall audit
   when: audit_integrity_check.stdout
+  args:
+    warn: false
   tags: [ 'cat2' , 'V-38637' , 'auditd' , 'rpm' ]
 
 - name: "MEDIUM | V-38622 | PATCH | Mail relaying must be restricted"
@@ -2703,18 +2685,19 @@
 # sysctl kernel settings
 
 - name: "MEDIUM | V-38617 | PATCH | The SSH daemon must be configured to use only FIPS 140-2 approved ciphers
-        \tMEDIUM | V-38611 | PATCH | The SSH daemon must ignore .rhosts files
-        \tMEDIUM | V-38612 | PATCH | The SSH daemon must not allow host-based authentication
-        \tMEDIUM | V-38613 | PATCH | The system must not permit root logins using remote access programs such as ssh"
+    \tMEDIUM | V-38611 | PATCH | The SSH daemon must ignore .rhosts files
+    \tMEDIUM | V-38612 | PATCH | The SSH daemon must not allow host-based authentication
+    \tMEDIUM | V-38613 | PATCH | The system must not permit root logins using remote access programs such as ssh"
   lineinfile: >
     state={{ item.st }}
-    backup=yes dest=/etc/ssh/sshd_config
+    backup=yes
+    dest=/etc/ssh/sshd_config
     regexp={{ item.rx }}
     line={{ item.ln }}
   with_items:
-    - { st: 'present', rx: "'^#?Ciphers'", ln: "Ciphers aes128-ctr,aes192-ctr,aes256-ctr,aes128-cbc,3des-cbc,aes192-cbc,aes256-cbc" }
-    - { st: 'present', rx: "'^#?HostbasedAuthentication'", ln: "HostbasedAuthentication no" }
-    - { st: 'present', rx: "'^#?PermitRootLogin'", ln: "PermitRootLogin no" }
+    - { st: 'present', rx: '^#?Ciphers', ln: 'Ciphers aes128-ctr,aes192-ctr,aes256-ctr,aes128-cbc,3des-cbc,aes192-cbc,aes256-cbc' }
+    - { st: 'present', rx: '^#?HostbasedAuthentication', ln: 'HostbasedAuthentication no' }
+    - { st: 'present', rx: '^#?PermitRootLogin', ln: 'PermitRootLogin no' }
   tags: [ 'cat2' , 'V-38617' , 'V-38611' , 'V-38612' , 'V-38613', 'ssh' ]
   notify: restart ssh
 
@@ -2725,8 +2708,8 @@
     regexp={{ item.rx }}
     line={{ item.ln }}
   with_items:
-    - { st: 'present', rx: "'^#?Banner'", ln: "Banner /etc/issue" }
-    - { st: 'present', rx: "'^(#)?PrintLastLog'", ln: "PrintLastLog yes" }
+    - { st: 'present', rx: '^#?Banner', ln: 'Banner /etc/issue' }
+    - { st: 'present', rx: '^(#)?PrintLastLog', ln: 'PrintLastLog yes' }
   tags: [ 'cat2' , 'V-38615' , 'V-38484' , 'ssh' , 'logon_settings' , 'dod_logon_banner' ]
   notify: restart ssh
 
